@@ -1,0 +1,10 @@
+{
+  "description": "This web application simulates vehicle dynamics by allowing users to visualize wheel rotation while moving forward, enhancing driving experience and education.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

@@ -1,0 +1,174 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Inter:Regular';
+  src: url('https://static.figma.com/font/Inter_1') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter:Medium';
+  src: url('https://static.figma.com/font/Inter_1') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter:Semi Bold';
+  src: url('https://static.figma.com/font/Inter_1') format('woff2');
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter:Bold';
+  src: url('https://static.figma.com/font/Inter_1') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter:Extra Bold';
+  src: url('https://static.figma.com/font/Inter_1') format('woff2');
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
+:root {
+  font-family: 'Inter:Regular', sans-serif;
+  color: #1e211f;
+  background: #f2f2ed;
+  --unit: clamp(0.71px, 0.06944444vw, 1px);
+  --icon-scale: clamp(0.71, calc(100vw / 1440px), 1);
+}
+
+body { margin: 0; }
+.dashboard {
+  height: 100dvh;
+  min-height: calc(900 * var(--unit));
+}
+.design-icon {
+  transform: scale(var(--icon-scale));
+  transform-origin: top left;
+}
+
+.car-replay {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 18px;
+  -webkit-tap-highlight-color: transparent;
+}
+.car-replay:focus-visible {
+  outline: 2px solid #139b58;
+  outline-offset: 6px;
+}
+.driving-car {
+  /* Travel is 28% of the 1584px source. The tire radius is 107px:
+     443.52 / 107 radians = 237.496 degrees of counterclockwise roll. */
+  --drive-duration: 2.8s;
+  --drive-easing: cubic-bezier(0.18, 0.65, 0.3, 1);
+  --wheel-turn: -237.496deg;
+  position: absolute;
+  inset: 0;
+  display: block;
+  animation: drive-forward var(--drive-duration) var(--drive-easing) both;
+}
+.car-body {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+.wheel {
+  position: absolute;
+  display: block;
+  width: 11.237374%;
+  height: 26.488095%;
+  pointer-events: none;
+}
+.wheel-front { left: 22.727273%; top: 51.934524%; }
+.wheel-rear { left: 69.128788%; top: 51.488095%; }
+.wheel img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.brake-rotor {
+  z-index: 1;
+  animation: roll-forward var(--drive-duration) var(--drive-easing) both;
+}
+.brake-caliper { z-index: 2; }
+.wheel-rim {
+  z-index: 3;
+  transform-origin: center;
+  animation: roll-forward var(--drive-duration) var(--drive-easing) both;
+}
+@keyframes drive-forward {
+  from { transform: translateX(28%); }
+  to { transform: translateX(0); }
+}
+@keyframes roll-forward {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(var(--wheel-turn)); }
+}
+
+@media (max-width: 760px) {
+  :root { --unit: 0.9px; --icon-scale: 0.9; }
+  .dashboard { height: auto; min-height: 100dvh; }
+  [data-name='Sidebar'] { position: fixed; inset: 0 auto 0 0; z-index: 10; }
+  [data-name='Workspace'] { margin-left: calc(76 * var(--unit)); }
+  [data-name='Workspace'], [data-name='Dashboard content'],
+  [data-name='Vehicle overview'], [data-name='Quick overview'] {
+    height: auto;
+  }
+  [data-name='Dashboard content'], [data-name='Vehicle overview'],
+  [data-name='Quick overview'] { flex: none; }
+  [data-name='Header'] { padding-inline: 18px; }
+  [data-name='Header balance'], [data-name='Profile'] > p { display: none; }
+  [data-name='Section navigation'] { gap: 0; }
+  [data-name='Navigation tab'] { padding-inline: 10px; }
+  [data-name='Dashboard content'] { flex-direction: column; padding: 0 18px 24px; }
+  [data-name='Vehicle overview'] { width: 100%; overflow: visible; }
+  [data-name='Vehicle hero'] { height: 390px; padding-inline: 0; }
+  [data-name='Vehicle'] {
+    width: 115%;
+    height: auto;
+    aspect-ratio: 1584 / 672;
+    bottom: 85px;
+    left: 50%;
+  }
+  [data-name='Welcome'] { white-space: normal; }
+  [data-name='Welcome'] > p:first-child { font-size: 32px; }
+  [data-name='Vehicle identity'] { left: 0; }
+  [data-name='Vehicle selector'] { right: 0; }
+  [data-name='Quick overview'] { width: 100%; flex-wrap: wrap; overflow: visible; }
+  [data-name='Vehicle location'] { flex-basis: 100%; height: 250px; }
+  [data-name='Driving range'], [data-name='Departure time'] {
+    flex: 1 1 calc(50% - 8px);
+    width: auto;
+    height: 230px;
+    padding: 16px;
+  }
+  [data-name='Account rail'] { width: 100%; height: auto; }
+  [data-name='Vehicle history'] { height: auto; min-height: 340px; }
+  [data-name='Connect services'] { min-height: 290px; }
+}
+@media (max-width: 480px) {
+  [data-name='Driving range'], [data-name='Departure time'] { flex-basis: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .driving-car, .wheel-rim, .brake-rotor { animation: none; }
+}
