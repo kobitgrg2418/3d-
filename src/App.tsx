@@ -6,39 +6,19 @@ function DrivingCar() {
     <button
       className="car-replay"
       onClick={() => setReplay((value) => value + 1)}
-      aria-label="Replay the car rolling forward"
-      title="Click to replay the drive"
+      aria-label="Replay the car video"
+      title="Click to replay the video"
     >
-      <span key={replay} className="driving-car">
-        <img
-          className="car-body"
-          src={imgVehicle}
-          alt="Dark grey Porsche 911 Carrera 4 GTS"
-        />
-        {(["front", "rear"] as const).map((position) => (
-          <span
-            key={position}
-            className={`wheel wheel-${position}`}
-            aria-hidden="true"
-          >
-            <img
-              className="brake-rotor"
-              src={`${assetPathPrefix}/${position}-rotor.png`}
-              alt=""
-            />
-            <img
-              className="brake-caliper"
-              src={`${assetPathPrefix}/${position}-caliper.png`}
-              alt=""
-            />
-            <img
-              className="wheel-rim"
-              src={`${assetPathPrefix}/${position}-rim.png`}
-              alt=""
-            />
-          </span>
-        ))}
-      </span>
+      <video
+        key={replay}
+        className="car-video block size-full object-cover will-change-transform motion-safe:animate-[drive-forward_5s_cubic-bezier(0.18,0.65,0.3,1)_both]"
+        src="/assets/car-drive.mp4"
+        autoPlay
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+      />
     </button>
   )
 }
@@ -76,12 +56,12 @@ const imgWifi = `${assetPathPrefix}/a64c4.svg`
 export default function VehicleDashboard() {
   return (
     <div
-      className="dashboard bg-[#f2f2ed] content-stretch flex items-start relative size-full"
+      className="dashboard bg-[#eaeaec] content-stretch flex items-start relative size-full"
       data-node-id="1:14"
       data-name="Vehicle dashboard"
     >
       <div
-        className="bg-[#f2f2ed] content-stretch flex flex-col h-full items-center justify-between overflow-clip pb-[calc(28*var(--unit))] pt-[calc(25*var(--unit))] relative shrink-0 w-[calc(76*var(--unit))]"
+        className="bg-[#eaeaec] content-stretch flex flex-col h-full items-center justify-between overflow-clip pb-[calc(28*var(--unit))] pt-[calc(25*var(--unit))] relative shrink-0 w-[calc(76*var(--unit))]"
         data-node-id="1:15"
         data-name="Sidebar"
       >
@@ -261,7 +241,7 @@ export default function VehicleDashboard() {
               className="[word-break:break-word] font-['Inter:Medium'] font-medium leading-[normal] not-italic relative shrink-0 text-[#7c817c] text-[length:calc(12*var(--unit))] whitespace-nowrap"
               data-node-id="1:46"
             >
-              Mr. Levente Horváth
+              Mr.KobitGurung
             </p>
             <div
               className="relative shrink-0 size-[calc(12*var(--unit))]"
@@ -311,7 +291,7 @@ export default function VehicleDashboard() {
                   className="font-['Inter:Regular'] font-normal leading-[1.1] relative shrink-0 text-[#1e211f] text-[length:calc(42*var(--unit))]"
                   data-node-id="1:54"
                 >
-                  Welcome, Alex
+                  Welcome,Kobit
                 </p>
                 <p
                   className="font-['Inter:Medium'] font-medium leading-[normal] relative shrink-0 text-[#adb1ac] text-[length:calc(12*var(--unit))]"
@@ -359,7 +339,7 @@ export default function VehicleDashboard() {
                     className="relative shrink-0 text-[#1e211f] text-[length:calc(12*var(--unit))]"
                     data-node-id="1:62"
                   >
-                    911 Carrera 4 GTS
+                    911 Turbo s
                   </p>
                   <p
                     className="relative shrink-0 text-[#adb1ac] text-[length:calc(11*var(--unit))]"

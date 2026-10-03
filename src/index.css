@@ -39,7 +39,7 @@
 :root {
   font-family: 'Inter:Regular', sans-serif;
   color: #1e211f;
-  background: #f2f2ed;
+  background: #eaeaec;
   --unit: clamp(0.71px, 0.06944444vw, 1px);
   --icon-scale: clamp(0.71, calc(100vw / 1440px), 1);
 }
@@ -70,6 +70,22 @@ body { margin: 0; }
 .car-replay:focus-visible {
   outline: 2px solid #139b58;
   outline-offset: 6px;
+}
+.car-video {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
 }
 .driving-car {
   /* Travel is 28% of the 1584px source. The tire radius is 107px:
