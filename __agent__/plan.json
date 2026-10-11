@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "items": [
+    {
+      "title": "Inspect the Next.js app and hero section structure",
+      "status": "in-progress"
+    },
+    {
+      "title": "Inspect the Blender asset and determine web-ready integration",
+      "status": "pending"
+    },
+    {
+      "title": "Implement the animated 3D hero experience",
+      "status": "pending"
+    },
+    {
+      "title": "Run checks and verify the result",
+      "status": "pending"
+    }
+  ],
+  "updated_at": "2026-09-30T07:25:15.510Z",
+  "session_id": "01a0f131-e06a-7520-a3c0-7207a92b482b"
+}
