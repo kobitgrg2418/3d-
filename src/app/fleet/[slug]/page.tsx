@@ -375,10 +375,11 @@ export default async function CarDetailPage({ params }: PageProps) {
         <Link href="/" className="carent-brand">30Rentals</Link>
         <div className="carent-nav-links">
           <Link href="/">Home</Link>
-          <Link href="/fleet" style={{ color: "#0b0f19", fontWeight: 600 }}>Cars</Link>
-          <Link href="/#how">How it works</Link>
-          <Link href="/#experience">Experience</Link>
-          <Link href="/#faq">FAQ</Link>
+          <Link href="/fleet" style={{ color: "#0b0f19", fontWeight: 600 }}>Fleet</Link>
+          <Link href="/how-it-works">How it works</Link>
+          <Link href="/experience">Experience</Link>
+          <Link href="/owners">Owners</Link>
+          <Link href="/faq">FAQ</Link>
         </div>
         <Link href="/#booking" className="carent-nav-action">Book now</Link>
       </nav>

@@ -295,10 +295,11 @@ export default function CarentFooter() {
             <h4 className="cf-col-title">Pages</h4>
             <ul className="cf-links-list">
               <li><Link href="/">Home</Link></li>
-              <li><Link href="/fleet">Cars</Link></li>
-              <li><Link href="/#experience">Experience</Link></li>
-              <li><Link href="/#how">How it works</Link></li>
-              <li><Link href="/#faq">FAQs</Link></li>
+              <li><Link href="/fleet">Fleet</Link></li>
+              <li><Link href="/how-it-works">How it works</Link></li>
+              <li><Link href="/experience">Experience</Link></li>
+              <li><Link href="/owners">Owners</Link></li>
+              <li><Link href="/faq">FAQ</Link></li>
             </ul>
           </div>
 

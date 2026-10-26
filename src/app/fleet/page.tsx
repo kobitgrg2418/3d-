@@ -493,10 +493,11 @@ export default function FleetPage() {
         </Link>
         <div className="carent-nav-links">
           <Link href="/">Home</Link>
-          <Link href="/fleet" className="active">Cars</Link>
-          <Link href="/#how">How it works</Link>
-          <Link href="/#experience">Experience</Link>
-          <Link href="/#faq">FAQ</Link>
+          <Link href="/fleet" className="active">Fleet</Link>
+          <Link href="/how-it-works">How it works</Link>
+          <Link href="/experience">Experience</Link>
+          <Link href="/owners">Owners</Link>
+          <Link href="/faq">FAQ</Link>
         </div>
         <Link href="/#booking" className="carent-nav-action">
           Book now
