@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FLEET, Car } from "@/data/fleet";
+import CarentFooter from "@/components/CarentFooter";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -521,6 +522,7 @@ export default async function CarDetailPage({ params }: PageProps) {
           </section>
         )}
       </main>
+      <CarentFooter />
     </div>
   );
 }

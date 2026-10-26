@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { FLEET, BODIES, Body, Car } from "@/data/fleet";
+import CarentFooter from "@/components/CarentFooter";
 
 /* Icons copied from Framer Carent theme */
 const ArrowTopRight = () => (
@@ -603,19 +604,7 @@ export default function FleetPage() {
       </div>
 
       {/* Footer */}
-      <footer className="carent-footer">
-        <div className="carent-footer-inner">
-          <div className="carent-footer-copy">
-            © {new Date().getFullYear()} 30Rentals. All rights reserved.
-          </div>
-          <div className="carent-footer-links">
-            <Link href="/">Home</Link>
-            <Link href="/fleet">Cars</Link>
-            <Link href="/#experience">Experience</Link>
-            <Link href="/#faq">FAQ</Link>
-          </div>
-        </div>
-      </footer>
+      <CarentFooter />
     </div>
   );
 }

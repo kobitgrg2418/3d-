@@ -19,6 +19,7 @@ import { useEffect, useRef, useState } from "react";
 import "@fontsource-variable/space-grotesk";
 import Lenis from "lenis";
 import { animate, inView, motion, useScroll, useSpring, useTransform } from "framer-motion";
+import CarentFooter from "./CarentFooter";
 
 const FRAME_COUNT = 451;
 const FRAME_PATH = (i: number) =>
@@ -848,29 +849,7 @@ export default function Page() {
         </section>
 
         {/* ----------------------- footer ----------------------- */}
-        <footer className="r-foot">
-          <div className="r-wrap r-foot-grid">
-            <div>
-              <div className="r-big">30Rentals</div>
-              <p className="r-p" style={{ margin: "14px 0 26px", maxWidth: 300 }}>Car rental, designed around you. Clear prices, calm screens, great cars.</p>
-              <div className="r-foot-btns">
-                <RBtn href="mailto:hello@30rentals.com">Contact us</RBtn>
-                <a className="r-pin" href="#booking" aria-label="Pick-up locations">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z" stroke="currentColor" strokeWidth="1.6"/><circle cx="12" cy="9.5" r="2.5" stroke="currentColor" strokeWidth="1.6"/></svg>
-                </a>
-              </div>
-            </div>
-            <div className="r-pills">
-              {[["Home", "#top"], ["Fleet", "#fleet"], ["How it works", "#how"], ["Experience", "#experience"], ["Owners", "#owners"], ["FAQ", "#faq"]].map(([l, h]) => (
-                <a key={l} href={h}>{l}</a>
-              ))}
-            </div>
-          </div>
-          <div className="r-wrap r-legal">
-            <span>© {new Date().getFullYear()} 30Rentals. All rights reserved.</span>
-            <span><a href="#top">Terms</a> · <a href="#top">Privacy</a> · <a href="#top">Rental policy</a></span>
-          </div>
-        </footer>
+        <CarentFooter />
         </div>
       </main>
     </>
