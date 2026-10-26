@@ -964,13 +964,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .rnav{position:fixed;top:0;left:0;right:0;z-index:50;height:70px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
   padding:0 clamp(16px,2.2vw,32px);background:var(--rbg);font-family:var(--rfont);color:#000;border-bottom:1px solid var(--rline)}
 .rbrand{font-size:19px;font-weight:600;letter-spacing:-.01em;text-transform:uppercase;color:#000}
-.rnav-links{display:flex;gap:8px}
-.rnav-links a{padding:15px 24px;border-radius:16px;background:var(--rcard);font-size:14px;font-weight:500;color:#000;transition:background .25s,transform .25s}
-.rnav-links a:hover{background:#fff;transform:translateY(-1px);color:#000}
+.rnav-links{display:flex;gap:clamp(20px,2.4vw,36px)}
+.rnav-links a{padding:8px 0;border-radius:0;background:transparent;font-size:14px;font-weight:500;color:#000;transition:color .25s,opacity .25s}
+.rnav-links a:hover{background:transparent;color:#000;opacity:0.7}
 .rnav[data-solid="0"]{background:transparent;border-color:transparent;color:#fff}
 .rnav[data-solid="0"] .rbrand{color:#fff}
-.rnav[data-solid="0"] .rnav-links a{background:rgba(255,255,255,.1);color:#fff}
-.rnav[data-solid="0"] .rnav-links a:hover{background:rgba(255,255,255,.2);color:#fff}
+.rnav[data-solid="0"] .rnav-links a{background:transparent;color:#fff}
+.rnav[data-solid="0"] .rnav-links a:hover{background:transparent;color:#fff;opacity:0.7}
 .rnav-cta{justify-self:end}
 .rburger{display:none;justify-self:end;width:46px;height:46px;border-radius:14px;background:var(--rink);position:relative}
 .rburger span{position:absolute;left:14px;right:14px;height:2px;background:#fff;border-radius:2px;transition:transform .3s}
