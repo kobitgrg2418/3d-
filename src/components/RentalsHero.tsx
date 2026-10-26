@@ -7,7 +7,7 @@
  *
  * Why it stays smooth:
  *  - Frames are drawn on a <canvas> (no <img> swapping, no layout work).
- *  - All frames are preloaded + decoded before the experience unlocks.
+ *  - Frames are preloaded + decoded in the background while the page is live.
  *  - Scroll position is eased in a requestAnimationFrame loop (frame-rate
  *    independent), so wheel notches glide instead of stepping.
  *  - Text overlays are driven through refs / direct style writes, so React
@@ -223,9 +223,6 @@ export default function Page() {
   const counterRef = useRef<HTMLSpanElement>(null);
   const navRef = useRef<HTMLElement>(null);
 
-  const [loaded, setLoaded] = useState(0);
-  const [ready, setReady] = useState(false);
-
   // booking state
   const [place, setPlace] = useState(LOCATIONS[0]);
   const [from, setFrom] = useState("");
@@ -330,7 +327,6 @@ export default function Page() {
 
   useEffect(() => {
     let cancelled = false;
-    let done = 0;
     let next = 0;
     const CONCURRENCY = 10;
 
@@ -342,8 +338,6 @@ export default function Page() {
         const finish = () => {
           if (cancelled) return resolve();
           imagesRef.current[i] = img;
-          done++;
-          if (done % 6 === 0 || done === FRAME_COUNT) setLoaded(done);
           resolve();
         };
         // decode() pushes the JPEG decode off the scroll path
@@ -360,9 +354,7 @@ export default function Page() {
       }
     };
 
-    Promise.all(Array.from({ length: CONCURRENCY }, worker)).then(() => {
-      if (!cancelled) setReady(true);
-    });
+    Promise.all(Array.from({ length: CONCURRENCY }, worker));
 
     return () => {
       cancelled = true;
@@ -373,7 +365,6 @@ export default function Page() {
   /* 2. Render loop: eased scroll → frame + text overlays                */
   /* ------------------------------------------------------------------ */
   useEffect(() => {
-    if (!ready) return;
     const canvas = canvasRef.current!;
     const track = trackRef.current!;
     const ctx = canvas.getContext("2d", { alpha: false })!;
@@ -510,26 +501,13 @@ export default function Page() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
     };
-  }, [ready]);
-
-  const pct = Math.round((loaded / FRAME_COUNT) * 100);
+  }, []);
 
   const scrollToNext = () => smoothTo.current(window.innerHeight * 1.1);
 
   return (
     <>
       <style>{CSS}</style>
-
-      {/* ------------------------- loader ------------------------- */}
-      <div className="loader" data-hidden={ready ? "1" : "0"} aria-hidden={ready}>
-        <div className="loader-logo">
-          30<span>Rentals</span>
-        </div>
-        <div className="loader-track">
-          <div className="loader-fill" style={{ transform: `scaleX(${pct / 100})` }} />
-        </div>
-        <div className="loader-pct">Preparing your showroom · {pct}%</div>
-      </div>
 
       {/* --------------------------- nav --------------------------- */}
       <nav className="rnav" ref={navRef} data-solid="0">
@@ -913,16 +891,6 @@ html{background:var(--rbg,#f2f2f2);-webkit-text-size-adjust:100%}
 body{font-family:var(--font);color:var(--fg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-
-/* loader */
-.loader{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:22px;transition:opacity .8s ease,visibility .8s}
-.loader[data-hidden="1"]{opacity:0;visibility:hidden;pointer-events:none}
-.loader-logo{font-size:34px;font-weight:700;letter-spacing:-.02em}
-.loader-logo span,.logo span{color:var(--red)}
-.loader-track{width:min(260px,60vw);height:2px;background:var(--line);overflow:hidden;border-radius:2px}
-.loader-fill{height:100%;background:var(--red);transform-origin:left;transition:transform .25s ease}
-.loader-pct{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
 
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;height:50px;padding:0 28px;border-radius:999px;
