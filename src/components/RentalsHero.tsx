@@ -16,6 +16,9 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import "@fontsource-variable/space-grotesk";
+import Lenis from "lenis";
+import { animate, inView, motion, useScroll, useSpring, useTransform } from "framer-motion";
 
 const FRAME_COUNT = 451;
 const FRAME_PATH = (i: number) =>
@@ -107,21 +110,24 @@ const PRINCIPLES = [
 ];
 
 
-/* ---------- SAMPLE DATA: replace with your real fleet & prices ---------- */
-type Body = "Hatchback" | "Sedan" | "SUV" | "Sport" | "Electric";
+/* ---------- SAMPLE DATA: replace with your real fleet, photos & prices ---------- */
+type Body = "SUV" | "Sport" | "Coupe" | "Wagon";
 type Car = {
-  id: string; name: string; body: Body; seats: number; gear: "Auto" | "Manual";
-  fuel: string; bags: number; price: number; tag?: string; image?: string;
+  id: string; name: string; year: number; body: Body; seats: number; gear: "Auto" | "Manual";
+  fuel: string; bags: number; price: number; tag?: string; image: string;
 };
 const FLEET: Car[] = [
-  { id: "c1", name: "City Hatch", body: "Hatchback", seats: 4, gear: "Manual", fuel: "Petrol", bags: 2, price: 3500, tag: "Best value" },
-  { id: "c2", name: "Urban Sedan", body: "Sedan", seats: 5, gear: "Auto", fuel: "Petrol", bags: 3, price: 5200 },
-  { id: "c3", name: "Trail SUV", body: "SUV", seats: 5, gear: "Auto", fuel: "Diesel", bags: 4, price: 7800, tag: "Popular" },
-  { id: "c4", name: "Family Explorer", body: "SUV", seats: 7, gear: "Auto", fuel: "Diesel", bags: 5, price: 9400 },
-  { id: "c5", name: "Volt Commuter", body: "Electric", seats: 5, gear: "Auto", fuel: "Electric", bags: 3, price: 6900, tag: "Zero emissions" },
-  { id: "c6", name: "Midnight Coupe", body: "Sport", seats: 4, gear: "Auto", fuel: "Petrol", bags: 2, price: 18500, tag: "Signature" },
+  { id: "c1", name: "Range Rover Sport", year: 2024, body: "SUV", seats: 5, gear: "Auto", fuel: "Petrol", bags: 4, price: 14500, tag: "Popular", image: "/rent/range-rover-sport.png" },
+  { id: "c2", name: "Porsche 911 GT3 RS", year: 2023, body: "Sport", seats: 2, gear: "Auto", fuel: "Petrol", bags: 1, price: 32000, tag: "Performance icon", image: "/rent/porsche-gt3.webp" },
+  { id: "c3", name: "Lamborghini Urus", year: 2024, body: "SUV", seats: 5, gear: "Auto", fuel: "Petrol", bags: 4, price: 36000, tag: "New arrival", image: "/rent/urus.webp" },
+  { id: "c4", name: "McLaren 720S Spider", year: 2023, body: "Sport", seats: 2, gear: "Auto", fuel: "Petrol", bags: 1, price: 42000, image: "/rent/mclaren.webp" },
+  { id: "c5", name: "BMW M4 Competition", year: 2024, body: "Coupe", seats: 4, gear: "Auto", fuel: "Petrol", bags: 2, price: 17500, image: "/rent/aurvane.png" },
+  { id: "c6", name: "Aston Martin DB12", year: 2024, body: "Coupe", seats: 4, gear: "Auto", fuel: "Petrol", bags: 2, price: 34000, tag: "Signature", image: "/rent/green-gt.webp" },
+  { id: "c7", name: "Mercedes-AMG G63", year: 2024, body: "SUV", seats: 5, gear: "Auto", fuel: "Petrol", bags: 4, price: 24000, image: "/rent/veltora.png" },
+  { id: "c8", name: "Audi RS6 Avant", year: 2023, body: "Wagon", seats: 5, gear: "Auto", fuel: "Petrol", bags: 5, price: 21000, image: "/rent/krynox.png" },
+  { id: "c9", name: "Range Rover Velar", year: 2024, body: "SUV", seats: 5, gear: "Auto", fuel: "Diesel", bags: 4, price: 11500, tag: "Best value", image: "/rent/pharyx.png" },
 ];
-const BODIES: ("All" | Body)[] = ["All", "Hatchback", "Sedan", "SUV", "Electric", "Sport"];
+const BODIES: ("All" | Body)[] = ["All", "SUV", "Sport", "Coupe", "Wagon"];
 const PROTECTION_PER_DAY = 600;
 const LOCATIONS = ["Pokhara Lakeside", "Pokhara Airport", "Kathmandu Airport", "Kathmandu Thamel"];
 
@@ -130,6 +136,16 @@ const STEPS = [
   { t: "Compare", d: "Clear specs side by side, with the total for your exact dates on every card." },
   { t: "Confirm", d: "One screen, one price. Add protection if you want it, skip it if you don't." },
   { t: "Drive", d: "Show your booking, collect the keys, go. Return is just as quick." },
+];
+
+const TESTIMONIALS = [
+  { quote: "Outstanding service from start to finish. The booking was clear, the car was immaculate, and handover took minutes.", name: "James Mitchell", car: "Porsche 911" },
+  { quote: "Finally a rental site that shows the real total up front. I booked from my phone on the lakeside and collected the same afternoon.", name: "Priya Sharma", car: "Range Rover Sport" },
+];
+
+const TEAM = [
+  { name: "Michael Richardson", role: "Fleet lead", image: "/rent/team-1.webp" },
+  { name: "Sarah Thompson", role: "Founder", image: "/rent/team-2.webp" },
 ];
 
 const FAQS = [
@@ -143,30 +159,37 @@ const FAQS = [
 const fmt = (n: number) => "Rs " + n.toLocaleString("en-IN");
 const iso = (d: Date) => d.toISOString().slice(0, 10);
 
-function CarArt({ body }: { body: Body }) {
-  // simple, generic silhouettes (swap for real photos via Car.image)
-  const paths: Record<Body, string> = {
-    Hatchback: "M18 62 L26 44 Q30 38 40 37 L86 36 Q98 36 106 46 L130 50 Q142 52 144 62 Z",
-    Sedan: "M10 62 L22 46 Q27 40 38 39 L70 38 Q80 28 98 28 L120 30 Q134 34 142 48 L152 52 Q158 56 158 62 Z",
-    SUV: "M12 62 L16 40 Q18 30 30 29 L120 28 Q134 28 140 40 L152 48 Q158 52 158 62 Z",
-    Electric: "M12 62 L24 44 Q30 36 44 35 L84 32 Q100 30 112 38 L136 46 Q150 50 154 62 Z",
-    Sport: "M8 62 L20 50 Q32 42 52 40 L88 30 Q102 26 118 36 L146 46 Q160 50 162 62 Z",
-  };
+function Arrow({ down = false }: { down?: boolean }) {
   return (
-    <svg viewBox="0 0 170 80" className="car-art" aria-hidden>
-      <defs>
-        <linearGradient id={`g-${body}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#2a2a2a" />
-          <stop offset="1" stopColor="#0c0c0c" />
-        </linearGradient>
-      </defs>
-      <ellipse cx="85" cy="68" rx="70" ry="5" fill="rgba(225,29,46,.18)" />
-      <path d={paths[body]} fill={`url(#g-${body})`} stroke="rgba(255,255,255,.28)" strokeWidth="1" />
-      <circle cx="42" cy="62" r="9" fill="#050505" stroke="rgba(255,255,255,.45)" />
-      <circle cx="128" cy="62" r="9" fill="#050505" stroke="rgba(255,255,255,.45)" />
-      <circle cx="42" cy="62" r="3" fill="#e11d2e" />
-      <circle cx="128" cy="62" r="3" fill="#e11d2e" />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden style={down ? { transform: "rotate(90deg)" } : undefined}>
+      <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
+  );
+}
+
+/** Black pill button with a white arrow chip (rent.zip style). */
+function RBtn({ children, href, onClick, light = false, type }: {
+  children: React.ReactNode; href?: string; onClick?: (e: React.MouseEvent) => void; light?: boolean; type?: "submit" | "button";
+}) {
+  const cls = `rbtn ${light ? "rbtn-light" : ""}`;
+  const inner = (<><span>{children}</span><i><Arrow /></i></>);
+  return href ? (
+    <a href={href} className={cls} onClick={onClick}>{inner}</a>
+  ) : (
+    <button type={type ?? "button"} className={cls} onClick={onClick}>{inner}</button>
+  );
+}
+
+/** Scroll-linked image: drifts and scales as it crosses the viewport (framer-motion useScroll). */
+function Parallax({ src, alt = "", amount = 36 }: { src: string; alt?: string; amount?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], [-amount, amount]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.22, 1.14, 1.22]);
+  return (
+    <div ref={ref} className="r-px">
+      <motion.img src={src} alt={alt} loading="lazy" style={{ y, scale }} />
+    </div>
   );
 }
 
@@ -208,10 +231,11 @@ export default function Page() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [body, setBody] = useState<"All" | Body>("All");
-  const [picked, setPicked] = useState<string>("c3");
+  const [picked, setPicked] = useState<string>("c1");
   const [protect, setProtect] = useState(true);
   const [faq, setFaq] = useState<number | null>(0);
   const [booked, setBooked] = useState(false);
+  const [menu, setMenu] = useState(false);
 
   useEffect(() => {
     const a = new Date(); a.setDate(a.getDate() + 1);
@@ -226,53 +250,54 @@ export default function Page() {
   const total = rental + prot;
   const shown = FLEET.filter((c) => body === "All" || c.body === body);
 
-  // scroll-reveal for everything below the hero
-  useEffect(() => {
-    const els = document.querySelectorAll<HTMLElement>("[data-rv]");
-    const io = new IntersectionObserver(
-      (es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }),
-      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []);
+  // Page scroll progress (framer-motion), shown as a thin line under the navbar
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 28, mass: 0.4 });
 
-  // Eased page scrolling (wheel + anchor links). Touch/keyboard stay native.
+  // Section reveals: IntersectionObserver + framer-motion animate.
+  // Re-runs when the fleet filter changes so newly mounted cards animate in too.
+  // Done once-per-element via data-rvd (not a WeakSet) so React Strict Mode
+  // remounts can re-attach observers after the previous ones were stopped.
+  useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const stops: (() => void)[] = [];
+    document.querySelectorAll<HTMLElement>("[data-rv]").forEach((el) => {
+      if (el.dataset.rvd === "1") return;
+      if (reduce) {
+        el.style.opacity = "1";
+        el.dataset.rvd = "1";
+        return;
+      }
+      const delay = (parseFloat(el.style.transitionDelay) || 0) / 1000;
+      el.style.transitionDelay = "";
+      stops.push(
+        inView(
+          el,
+          () => {
+            if (el.dataset.rvd === "1") return;
+            el.dataset.rvd = "1";
+            animate(
+              el,
+              { opacity: [0, 1], y: [44, 0], filter: ["blur(6px)", "blur(0px)"] },
+              { duration: 0.9, delay, ease: [0.2, 0.7, 0.2, 1] },
+            );
+          },
+          { margin: "0px 0px -8% 0px", amount: 0.12 },
+        ),
+      );
+    });
+    return () => stops.forEach((st) => st());
+  }, [body]);
+
+  // Lenis smooth scroll (wheel / touch / keyboard) + anchor links
   const smoothTo = useRef<(y: number) => void>((y) => window.scrollTo(0, y));
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let target = window.scrollY;
-    let cur = window.scrollY;
-    let active = false;
+    const lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 1, smoothWheel: true });
     let raf = 0;
-    let last = 0;
-    const max = () => document.documentElement.scrollHeight - window.innerHeight;
-    const clampY = (y: number) => Math.min(max(), Math.max(0, y));
-
-    const loop = (now: number) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-      cur += (target - cur) * (1 - Math.exp(-9 * dt));
-      if (Math.abs(target - cur) < 0.25) cur = target;
-      window.scrollTo(0, cur);
-      if (cur === target) { active = false; return; }
-      raf = requestAnimationFrame(loop);
-    };
-    const kick = () => {
-      if (active) return;
-      active = true;
-      last = performance.now();
-      raf = requestAnimationFrame(loop);
-    };
-    const onWheel = (e: WheelEvent) => {
-      if (e.ctrlKey || e.defaultPrevented) return;
-      e.preventDefault();
-      const unit = e.deltaMode === 1 ? 34 : e.deltaMode === 2 ? window.innerHeight : 1;
-      if (!active) { cur = window.scrollY; target = cur; }
-      target = clampY(target + e.deltaY * unit);
-      kick();
-    };
-    const onScroll = () => { if (!active) { cur = target = window.scrollY; } };
+    const loop = (t: number) => { lenis.raf(t); raf = requestAnimationFrame(loop); };
+    raf = requestAnimationFrame(loop);
+    smoothTo.current = (y: number) => lenis.scrollTo(y, { duration: 1.5, easing: (t: number) => 1 - Math.pow(1 - t, 4) });
     const onClick = (e: MouseEvent) => {
       const a = (e.target as HTMLElement).closest?.('a[href^="#"]') as HTMLAnchorElement | null;
       if (!a) return;
@@ -280,27 +305,20 @@ export default function Page() {
       const el = id ? document.getElementById(id) : document.body;
       if (!el) return;
       e.preventDefault();
-      smoothTo.current(id ? el.getBoundingClientRect().top + window.scrollY : 0);
+      smoothTo.current(id ? el.getBoundingClientRect().top + window.scrollY - 70 : 0);
     };
-    smoothTo.current = (y: number) => {
-      if (!active) { cur = window.scrollY; }
-      target = clampY(y);
-      kick();
-    };
-    window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("click", onClick);
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("scroll", onScroll);
       document.removeEventListener("click", onClick);
+      lenis.destroy();
+      smoothTo.current = (y) => window.scrollTo(0, y);
     };
   }, []);
 
   const go = (id: string) => {
     const el = document.getElementById(id);
-    if (el) smoothTo.current(el.getBoundingClientRect().top + window.scrollY);
+    if (el) smoothTo.current(el.getBoundingClientRect().top + window.scrollY - 70);
   };
 
   /* ------------------------------------------------------------------ */
@@ -514,21 +532,19 @@ export default function Page() {
       </div>
 
       {/* --------------------------- nav --------------------------- */}
-      <nav className="nav" ref={navRef} data-solid="0">
-        <a className="logo" href="#top">
-          30<span>Rentals</span>
-        </a>
-        <div className="nav-links">
-          <a href="#fleet">Fleet</a>
-          <a href="#how">How it works</a>
-          <a href="#experience">Experience</a>
-          <a href="#faq">FAQ</a>
-          <a href="#booking" className="btn btn-sm">
-            Book now
-          </a>
+      <nav className="rnav" ref={navRef} data-solid="0">
+        <a className="rbrand" href="#top">30Rentals</a>
+        <div className={`rnav-links ${menu ? "open" : ""}`} onClick={() => setMenu(false)}>
+          {[["Fleet", "#fleet"], ["How it works", "#how"], ["Experience", "#experience"], ["Owners", "#owners"], ["FAQ", "#faq"]].map(([l, h]) => (
+            <a key={l} href={h}>{l}</a>
+          ))}
         </div>
+        <div className="rnav-cta"><RBtn href="#booking">Book now</RBtn></div>
+        <motion.div className="rprog" style={{ scaleX: progress }} aria-hidden />
+        <button className="rburger" aria-label="Menu" aria-expanded={menu} onClick={() => setMenu(!menu)}>
+          <span /><span />
+        </button>
       </nav>
-
       {/* ----------------- pinned scroll-driven hero ----------------- */}
       <main id="top">
         <div ref={trackRef} className="track" style={{ height: `${SCROLL_VH}vh` }}>
@@ -576,20 +592,22 @@ export default function Page() {
             {/* scroll down */}
             <div className="hint" ref={hintRef}>
               <button className="hint-btn" onClick={scrollToNext} aria-label="Scroll down">
-                <div className="scroll-line" />
-                <span className="scroll-text">SCROLL</span>
+                <span className="hint-label">Scroll down</span>
+                <span className="mouse">
+                  <span className="wheel" />
+                </span>
+                <svg className="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </button>
             </div>
           </div>
         </div>
 
         {/* -------------------- booking bar -------------------- */}
-        <section className="bookbar-wrap" id="booking">
-          <form
-            className="bookbar"
-            data-rv
-            onSubmit={(e) => { e.preventDefault(); go("fleet"); }}
-          >
+        <div className="lt">
+        <section className="r-bookwrap" id="booking">
+          <form className="r-book" data-rv onSubmit={(e) => { e.preventDefault(); go("fleet"); }}>
             <label>
               <span>Pick-up location</span>
               <select value={place} onChange={(e) => setPlace(e.target.value)}>
@@ -613,88 +631,103 @@ export default function Page() {
                 {BODIES.map((b) => <option key={b}>{b}</option>)}
               </select>
             </label>
-            <button className="btn" type="submit">Search cars</button>
+            <RBtn type="submit">Search cars</RBtn>
           </form>
-          <p className="bookbar-note" data-rv>
-            {days} {days === 1 ? "day" : "days"} · {place} · prices update live
-          </p>
-        </section>
-
-        {/* -------------------- promise strip -------------------- */}
-        <section className="strip" data-rv>
-          {["Total price up front", "Free-cancellation window", "Digital pick-up", "Support when you need it"].map((t) => (
-            <div key={t}><i />{t}</div>
-          ))}
+          <p className="r-note" data-rv>{days} {days === 1 ? "day" : "days"} · {place} · prices update live</p>
         </section>
 
         {/* ------------------------- fleet ------------------------- */}
-        <section className="section" id="fleet">
-          <div className="wrap">
-            <div className="head-row" data-rv>
+        <section className="r-sec" id="fleet">
+          <div className="r-wrap">
+            <div className="r-head" data-rv>
               <div>
-                <p className="eyebrow red">The fleet</p>
-                <h2 className="h2">Pick a car.<br /><em>See the real total.</em></h2>
+                <p className="r-eye">Fleet</p>
+                <h2 className="r-h2">Pick a car.<br />See the real total.</h2>
               </div>
-              <div className="tabs" role="tablist" aria-label="Car type">
-                {BODIES.map((b) => (
-                  <button key={b} role="tab" aria-selected={body === b} className={body === b ? "on" : ""} onClick={() => setBody(b)}>
-                    {b}
-                  </button>
-                ))}
+              <div className="r-side">
+                <p className="r-p">Every card shows the full price for your dates. No surprises waiting at checkout.</p>
+                <div className="r-tabs" role="tablist" aria-label="Car type">
+                  {BODIES.map((b) => (
+                    <button key={b} role="tab" aria-selected={body === b} className={body === b ? "on" : ""} onClick={() => setBody(b)}>{b}</button>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div className="fleet">
+            <div className="r-fleet">
               {shown.map((c, i) => (
-                <article
-                  key={c.id}
-                  data-rv
-                  style={{ transitionDelay: `${(i % 3) * 70}ms` }}
-                  className={`car ${picked === c.id ? "sel" : ""}`}
-                  onClick={() => setPicked(c.id)}
-                >
-                  <div className="car-img">
-                    {c.tag && <span className="chip">{c.tag}</span>}
-                    {c.image ? <img src={c.image} alt={c.name} /> : <CarArt body={c.body} />}
+                <article key={c.id} data-rv style={{ transitionDelay: `${(i % 3) * 70}ms` }} className={`r-car ${picked === c.id ? "sel" : ""}`}>
+                  <div className="r-car-img" onClick={() => setPicked(c.id)}>
+                    <img src={c.image} alt={`${c.name} ${c.year}`} loading="lazy" />
+                    {c.tag && <span className="r-chip">{c.tag}</span>}
+                    <button
+                      className="r-go"
+                      aria-label={`Select ${c.name}`}
+                      onClick={(e) => { e.stopPropagation(); setPicked(c.id); setBooked(false); go("summary"); }}
+                    ><i><Arrow /></i></button>
                   </div>
-                  <div className="car-body">
-                    <div className="car-top">
+                  <div className="r-car-meta" onClick={() => setPicked(c.id)}>
+                    <div>
                       <h3>{c.name}</h3>
-                      <span className="muted">{c.body}</span>
+                      <p>{c.year} · {c.body} · {c.seats} seats · {c.gear}</p>
                     </div>
-                    <ul className="specs">
-                      <li>{c.seats} seats</li><li>{c.gear}</li><li>{c.fuel}</li><li>{c.bags} bags</li>
-                    </ul>
-                    <div className="car-bottom">
-                      <div>
-                        <strong>{fmt(c.price * days)}</strong>
-                        <small> / {days} {days === 1 ? "day" : "days"}</small>
-                        <div className="muted sm">{fmt(c.price)} per day</div>
-                      </div>
-                      <button
-                        className={`btn btn-sm ${picked === c.id ? "" : "btn-ghost"}`}
-                        onClick={(e) => { e.stopPropagation(); setPicked(c.id); setBooked(false); go("summary"); }}
-                      >
-                        {picked === c.id ? "Selected" : "Select"}
-                      </button>
+                    <div className="r-price">
+                      <strong>{fmt(c.price * days)}</strong>
+                      <p>{fmt(c.price)} / day</p>
                     </div>
                   </div>
                 </article>
               ))}
             </div>
-            <p className="sample" data-rv>Sample fleet &amp; prices shown. Replace the FLEET list at the top of this file with your cars.</p>
+            <p className="r-sample" data-rv>Sample fleet, photos &amp; prices shown. Replace the FLEET list at the top of this file with your own cars.</p>
+          </div>
+        </section>
+
+        {/* ---------------------- services bento ---------------------- */}
+        <section className="r-sec" id="experience">
+          <div className="r-wrap r-split2">
+            <div data-rv>
+              <p className="r-eye">Why 30Rentals</p>
+              <h2 className="r-h2">We&rsquo;re way more<br />than a rental desk</h2>
+              <p className="r-p" style={{ marginTop: 20, maxWidth: 380 }}>
+                Renting a car shouldn&rsquo;t feel like filling in a tax form. Every screen is designed to get you
+                from &ldquo;I need a car&rdquo; to &ldquo;keys in hand&rdquo; in the fewest, calmest steps possible.
+              </p>
+            </div>
+            <div className="r-bento">
+              <div className="r-col">
+                <figure className="r-tile t1" data-rv><Parallax src="/rent/inspect.webp" /><figcaption>Inspected before every trip</figcaption></figure>
+                <figure className="r-tile t3" data-rv><Parallax src="/rent/wheel.webp" /><figcaption>Detailed between rentals</figcaption></figure>
+              </div>
+              <div className="r-col">
+                <figure className="r-tile r-black t2" data-rv>
+                  <div className="r-ico">
+                    <b><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4" stroke="#000" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg></b>
+                    <b><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z" stroke="#000" strokeWidth="1.8" strokeLinejoin="round"/><path d="M8.5 12l2.5 2.5 4.5-5" stroke="#000" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg></b>
+                    <b><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 3v18M16 7.5c0-1.7-1.8-3-4-3s-4 1.3-4 3 1.8 2.7 4 3 4 1.3 4 3-1.8 3-4 3-4-1.3-4-3" stroke="#000" strokeWidth="1.8" strokeLinecap="round"/></svg></b>
+                  </div>
+                  <figcaption>One clear price, always visible</figcaption>
+                </figure>
+                <figure className="r-tile t4" data-rv><Parallax src="/rent/keys.jpg" /><figcaption>Keys handed over in minutes</figcaption></figure>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* ---------------------- how it works ---------------------- */}
-        <section className="section alt" id="how">
-          <div className="wrap">
-            <p className="eyebrow red" data-rv>How it works</p>
-            <h2 className="h2" data-rv>Four steps.<br /><em>No detours.</em></h2>
-            <ol className="steps">
+        <section className="r-sec" id="how">
+          <div className="r-wrap">
+            <div className="r-head" data-rv>
+              <div>
+                <p className="r-eye">How it works</p>
+                <h2 className="r-h2">Four steps.<br />No detours.</h2>
+              </div>
+              <div className="r-side"><RBtn href="#fleet">Browse fleet</RBtn></div>
+            </div>
+            <ol className="r-steps">
               {STEPS.map((st, i) => (
-                <li key={st.t} data-rv style={{ transitionDelay: `${i * 90}ms` }}>
-                  <span className="step-n">0{i + 1}</span>
+                <li key={st.t} data-rv style={{ transitionDelay: `${i * 80}ms` }}>
+                  <span className="r-num">0{i + 1}</span>
                   <h3>{st.t}</h3>
                   <p>{st.d}</p>
                 </li>
@@ -704,22 +737,18 @@ export default function Page() {
         </section>
 
         {/* -------------------- UI principles -------------------- */}
-        <section className="section" id="experience">
-          <div className="wrap">
-            <p className="eyebrow red" data-rv>The 30Rentals experience</p>
-            <h2 className="h2" data-rv>
-              Built interface-first.
-              <br />
-              <em>Everything else follows.</em>
-            </h2>
-            <p className="lead" data-rv>
-              Renting a car shouldn't feel like filling in a tax form. We design every screen to
-              get you from "I need a car" to "keys in hand" in the fewest, calmest steps possible.
-            </p>
-            <div className="grid">
+        <section className="r-sec">
+          <div className="r-wrap">
+            <div className="r-head" data-rv>
+              <div>
+                <p className="r-eye">The interface</p>
+                <h2 className="r-h2">Built interface-first.<br />Everything else follows.</h2>
+              </div>
+            </div>
+            <div className="r-grid4">
               {PRINCIPLES.map((p, i) => (
-                <article className="card" key={p.n} data-rv style={{ transitionDelay: `${i * 70}ms` }}>
-                  <span className="card-n">{p.n}</span>
+                <article className="r-card" key={p.n} data-rv style={{ transitionDelay: `${i * 70}ms` }}>
+                  <span className="r-num">{p.n}</span>
                   <h3>{p.t}</h3>
                   <p>{p.d}</p>
                 </article>
@@ -729,93 +758,142 @@ export default function Page() {
         </section>
 
         {/* ----------------- live booking summary ----------------- */}
-        <section className="section alt" id="summary">
-          <div className="wrap split">
+        <section className="r-sec" id="summary">
+          <div className="r-wrap r-split3">
             <div data-rv>
-              <p className="eyebrow red">Booking summary</p>
-              <h2 className="h2">Your total,<br /><em>always in view.</em></h2>
-              <p className="lead">
+              <p className="r-eye">Booking summary</p>
+              <h2 className="r-h2">Your total,<br />always in view.</h2>
+              <p className="r-p" style={{ marginTop: 20, maxWidth: 420 }}>
                 Change the car, the dates or the protection and the price answers instantly.
                 This is the same summary your customers see, from first search to confirmation.
               </p>
             </div>
 
-            <aside className="sum" data-rv aria-live="polite">
-              <div className="sum-head">
-                <div className="sum-art"><CarArt body={car.body} /></div>
-                <div>
+            <aside className="r-sum" data-rv aria-live="polite">
+              <div className="r-sum-img"><img src={car.image} alt={car.name} /></div>
+              <div className="r-sum-body">
+                <div className="r-sum-title">
                   <h3>{car.name}</h3>
-                  <p className="muted sm">{car.seats} seats · {car.gear} · {car.fuel}</p>
+                  <p>{car.year} · {car.seats} seats · {car.gear} · {car.fuel}</p>
                 </div>
+                <dl>
+                  <div><dt>Pick-up</dt><dd>{place}</dd></div>
+                  <div><dt>Dates</dt><dd>{from || "—"} → {to || "—"}</dd></div>
+                  <div><dt>Rental · {days} {days === 1 ? "day" : "days"}</dt><dd>{fmt(rental)}</dd></div>
+                  <div><dt>Full protection</dt><dd>{protect ? fmt(prot) : "Not added"}</dd></div>
+                  <div><dt>Service fees</dt><dd>Rs 0</dd></div>
+                </dl>
+                <label className="r-toggle">
+                  <input type="checkbox" checked={protect} onChange={(e) => setProtect(e.target.checked)} />
+                  <span className="sw" />
+                  <span>Add full protection <small>({fmt(PROTECTION_PER_DAY)}/day)</small></span>
+                </label>
+                <div className="r-total"><span>Total</span><strong>{fmt(total)}</strong></div>
+                <RBtn onClick={() => setBooked(true)}>{booked ? "Request received" : "Confirm booking"}</RBtn>
+                <p className="r-fine">{booked ? "Demo only: connect this button to your booking backend." : "You won't be charged in this demo."}</p>
               </div>
-              <dl>
-                <div><dt>Pick-up</dt><dd>{place}</dd></div>
-                <div><dt>Dates</dt><dd>{from || "—"} → {to || "—"}</dd></div>
-                <div><dt>Rental · {days} {days === 1 ? "day" : "days"}</dt><dd>{fmt(rental)}</dd></div>
-                <div><dt>Full protection</dt><dd>{protect ? fmt(prot) : "Not added"}</dd></div>
-                <div><dt>Service fees</dt><dd>Rs 0</dd></div>
-              </dl>
-              <label className="toggle">
-                <input type="checkbox" checked={protect} onChange={(e) => setProtect(e.target.checked)} />
-                <span className="sw" />
-                <span>Add full protection <small className="muted">({fmt(PROTECTION_PER_DAY)}/day)</small></span>
-              </label>
-              <div className="sum-total">
-                <span>Total</span>
-                <strong>{fmt(total)}</strong>
-              </div>
-              <button className="btn wide" onClick={() => setBooked(true)}>
-                {booked ? "Request received ✓" : "Confirm booking"}
-              </button>
-              <p className="muted sm center-t">{booked ? "Demo only: connect this button to your booking backend." : "You won't be charged in this demo."}</p>
             </aside>
           </div>
         </section>
 
+        {/* ------------------------- CTA ------------------------- */}
+        <section className="r-sec r-tight" id="book">
+          <div className="r-wrap">
+            <div className="r-cta" data-rv>
+              <Parallax src="/rent/studio-lambo.webp" amount={70} />
+              <div className="r-cta-in">
+                <h2>Ready to hit<br />the road?</h2>
+                <RBtn light href="#booking">Start your booking</RBtn>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------------------- testimonials ---------------------- */}
+        <section className="r-sec" id="owners">
+          <div className="r-wrap">
+            <div className="r-head" data-rv>
+              <div>
+                <p className="r-eye">Testimonials</p>
+                <h2 className="r-h2">Great numbers,<br />happy owners.</h2>
+              </div>
+              <div className="r-side">
+                <p className="r-p">Real experiences from people who booked, collected and drove — then came back.</p>
+              </div>
+            </div>
+            <div className="r-quotes">
+              {TESTIMONIALS.map((t) => (
+                <blockquote className="r-quote" key={t.name} data-rv>
+                  <p>&ldquo;{t.quote}&rdquo;</p>
+                  <footer><strong>{t.name}</strong><span>{t.car}</span></footer>
+                </blockquote>
+              ))}
+            </div>
+            <div className="r-team">
+              {TEAM.map((m) => (
+                <figure className="r-person" key={m.name} data-rv>
+                  <img src={m.image} alt={m.name} />
+                  <figcaption>
+                    <strong>{m.name}</strong>
+                    <span>{m.role}</span>
+                  </figcaption>
+                </figure>
+              ))}
+              <div className="r-stats" data-rv>
+                <div><b>800+</b><span>Trips completed</span></div>
+                <div><b>20+</b><span>Years on the road</span></div>
+                <div><b>4.9</b><span>Average owner rating</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ------------------------- FAQ ------------------------- */}
-        <section className="section" id="faq">
-          <div className="wrap narrow">
-            <p className="eyebrow red" data-rv>Questions</p>
-            <h2 className="h2" data-rv>Good to know.</h2>
-            <div className="faq" data-rv>
+        <section className="r-sec" id="faq">
+          <div className="r-wrap r-split2 faqs">
+            <div data-rv>
+              <p className="r-eye">FAQ</p>
+              <h2 className="r-h2">Everything<br />you need to know</h2>
+              <p className="r-p" style={{ marginTop: 20, maxWidth: 340 }}>Pick-up, pricing, changes and support, answered before you have to ask.</p>
+            </div>
+            <div className="r-faq" data-rv>
               {FAQS.map((f, i) => (
-                <div key={f.q} className={`qa ${faq === i ? "open" : ""}`}>
+                <div key={f.q} className={`r-qa ${faq === i ? "open" : ""}`}>
                   <button onClick={() => setFaq(faq === i ? null : i)} aria-expanded={faq === i}>
-                    <span>{f.q}</span>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+                    <span>{f.q}</span><Arrow down />
                   </button>
-                  <div className="qa-body"><p>{f.a}</p></div>
+                  <div className="r-qa-body"><p>{f.a}</p></div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ------------------------- CTA ------------------------- */}
-        <section className="section final" id="book">
-          <div className="wrap center">
-            <h2 className="h2" data-rv>Ready when you are.</h2>
-            <p className="lead" data-rv>Pick your dates. We'll handle the rest.</p>
-            <div className="cta-row center-row" data-rv>
-              <a href="#booking" className="btn" onClick={(e) => { e.preventDefault(); go("booking"); }}>Start your booking</a>
-              <a href="#top" className="btn btn-ghost">Back to top</a>
-            </div>
-          </div>
-        </section>
-
         {/* ----------------------- footer ----------------------- */}
-        <footer className="footer">
-          <div className="wrap foot-grid">
+        <footer className="r-foot">
+          <div className="r-wrap r-foot-grid">
             <div>
-              <div className="logo">30<span>Rentals</span></div>
-              <p className="muted sm">Car rental, designed around you.</p>
+              <div className="r-big">30Rentals</div>
+              <p className="r-p" style={{ margin: "14px 0 26px", maxWidth: 300 }}>Car rental, designed around you. Clear prices, calm screens, great cars.</p>
+              <div className="r-foot-btns">
+                <RBtn href="mailto:hello@30rentals.com">Contact us</RBtn>
+                <a className="r-pin" href="#booking" aria-label="Pick-up locations">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z" stroke="currentColor" strokeWidth="1.6"/><circle cx="12" cy="9.5" r="2.5" stroke="currentColor" strokeWidth="1.6"/></svg>
+                </a>
+              </div>
             </div>
-            <div><h4>Explore</h4><a href="#fleet">Fleet</a><a href="#how">How it works</a><a href="#experience">Experience</a></div>
-            <div><h4>Support</h4><a href="#faq">FAQ</a><a href="#booking">Book a car</a><a href="mailto:hello@30rentals.com">hello@30rentals.com</a></div>
-            <div><h4>Legal</h4><a href="#top">Terms</a><a href="#top">Privacy</a><a href="#top">Rental policy</a></div>
+            <div className="r-pills">
+              {[["Home", "#top"], ["Fleet", "#fleet"], ["How it works", "#how"], ["Experience", "#experience"], ["Owners", "#owners"], ["FAQ", "#faq"]].map(([l, h]) => (
+                <a key={l} href={h}>{l}</a>
+              ))}
+            </div>
           </div>
-          <p className="foot">© {new Date().getFullYear()} 30Rentals. All rights reserved.</p>
+          <div className="r-wrap r-legal">
+            <span>© {new Date().getFullYear()} 30Rentals. All rights reserved.</span>
+            <span><a href="#top">Terms</a> · <a href="#top">Privacy</a> · <a href="#top">Rental policy</a></span>
+          </div>
         </footer>
+        </div>
       </main>
     </>
   );
@@ -826,12 +904,12 @@ export default function Page() {
 /* ====================================================================== */
 const CSS = `
 :root{
-  --bg:#050505; --bg2:#0d0d0d; --bg-light:#ffffff; --fg:#f5f5f2; --fg-dark:#1a1a1a; --mute:rgba(245,245,242,.62); --mute-dark:rgba(26,26,26,.6);
-  --line:rgba(255,255,255,.1); --line-dark:rgba(0,0,0,.1); --red:#e11d2e; --red-glow:rgba(225,29,46,.45);
+  --bg:#050505; --bg2:#0d0d0d; --fg:#f5f5f2; --mute:rgba(245,245,242,.62);
+  --line:rgba(255,255,255,.1); --red:#e11d2e; --red-glow:rgba(225,29,46,.45);
   --font: "Inter","SF Pro Display",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 }
 *{box-sizing:border-box}
-html{background:var(--bg);-webkit-text-size-adjust:100%}
+html{background:var(--rbg,#f2f2f2);-webkit-text-size-adjust:100%}
 body{font-family:var(--font);color:var(--fg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -845,16 +923,6 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .loader-track{width:min(260px,60vw);height:2px;background:var(--line);overflow:hidden;border-radius:2px}
 .loader-fill{height:100%;background:var(--red);transform-origin:left;transition:transform .25s ease}
 .loader-pct{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
-
-/* nav */
-.nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;
-  padding:20px clamp(20px,4vw,48px);transition:background .4s ease,backdrop-filter .4s ease,border-color .4s}
-.nav[data-solid="1"]{background:rgba(255,255,255,.95);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line-dark)}
-.logo{font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--fg-dark)}
-.logo span{color:var(--red)}
-.nav-links{display:flex;align-items:center;gap:28px;font-size:14px;color:var(--fg-dark)}
-.nav-links a:not(.btn):hover{color:var(--red)}
-@media(max-width:640px){.nav-links a:not(.btn){display:none}}
 
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;height:50px;padding:0 28px;border-radius:999px;
@@ -883,7 +951,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .scene-center .eyebrow{justify-content:center}
 .scene-center .body{margin-inline:auto}
 .eyebrow{display:flex;align-items:center;gap:10px;margin:0 0 16px;font-size:12px;font-weight:600;
-  letter-spacing:.24em;text-transform:uppercase;color:var(--mute-dark)}
+  letter-spacing:.24em;text-transform:uppercase;color:var(--mute)}
 .eyebrow.red{color:var(--red)}
 .scene .eyebrow::before{content:"";width:28px;height:1px;background:var(--red)}
 .scene-center .eyebrow::before,.scene-center .eyebrow::after{content:"";width:28px;height:1px;background:var(--red)}
@@ -907,135 +975,229 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* scroll hint */
 .hint{position:absolute;z-index:7;left:0;right:0;bottom:clamp(22px,4vh,40px);display:flex;justify-content:center}
-.hint-btn{display:flex;flex-direction:column;align-items:center;gap:20px;color:var(--fg)}
-.scroll-line{width:1px;height:60px;background:rgba(255,255,255,0.6);animation:scrollLine 2s ease-in-out infinite}
-.scroll-text{font-size:12px;letter-spacing:.4em;text-transform:uppercase;color:rgba(255,255,255,0.8);font-weight:500}
-@keyframes scrollLine{0%,100%{transform:scaleY(1);opacity:1}50%{transform:scaleY(0.5);opacity:0.5}}
+.hint-btn{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--fg)}
+.hint-label{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--mute)}
+.mouse{position:relative;width:24px;height:38px;border:1.5px solid rgba(255,255,255,.55);border-radius:14px}
+.wheel{position:absolute;left:50%;top:7px;width:3px;height:7px;margin-left:-1.5px;border-radius:3px;background:var(--red);
+  animation:wheel 1.8s cubic-bezier(.6,0,.3,1) infinite}
+.chev{color:var(--red);animation:bob 1.8s ease-in-out infinite}
+@keyframes wheel{0%{transform:translateY(0);opacity:1}70%{transform:translateY(14px);opacity:0}100%{opacity:0}}
+@keyframes bob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(5px);opacity:1}}
 
-/* sections below */
-.section{position:relative;background:var(--bg-light);padding:clamp(90px,14vh,160px) 0;color:var(--fg-dark)}
-.wrap{width:min(1180px,100% - 48px);margin:0 auto}
-.center{text-align:center}
-.h2{margin:0;font-size:clamp(34px,5vw,68px);line-height:1.02;font-weight:700;letter-spacing:-.035em;color:var(--fg-dark)}
-.h2 em{font-style:normal;color:var(--mute-dark)}
-.lead{margin:24px 0 0;max-width:56ch;font-size:clamp(16px,1.5vw,20px);line-height:1.6;color:var(--mute-dark)}
-.center .lead{margin-inline:auto}
-.grid{margin-top:clamp(48px,8vh,88px);display:grid;gap:16px;grid-template-columns:repeat(4,1fr)}
-@media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.grid{grid-template-columns:1fr}}
-.card{position:relative;padding:28px 24px 32px;border:1px solid var(--line-dark);border-radius:20px;background:#ffffff;
-  transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease}
-.card:hover{transform:translateY(-6px);border-color:var(--red);box-shadow:0 10px 30px -10px rgba(225,29,46,.2)}
-.card-n{font-size:12px;letter-spacing:.2em;color:var(--red);font-weight:600}
-.card h3{margin:44px 0 10px;font-size:22px;letter-spacing:-.02em;color:var(--fg-dark)}
-.card p{margin:0;font-size:15px;line-height:1.6;color:var(--mute-dark)}
-.final{background:radial-gradient(60% 70% at 50% 100%,rgba(225,29,46,.16),transparent 70%),var(--bg-light);border-top:1px solid var(--line-dark)}
-.center-row{justify-content:center}
-.foot{margin:80px 0 0;font-size:12px;color:rgba(26,26,26,.5);letter-spacing:.06em}
 
-@media (prefers-reduced-motion:reduce){
-  .wheel,.chev{animation:none}
-  .btn,.card{transition:none}
+/* ====================================================================== */
+/* Light theme (rent.zip look): navbar, cards, bento, FAQ, footer          */
+/* Hero styles above are untouched.                                        */
+/* ====================================================================== */
+:root{--rbg:#f2f2f2;--rcard:#fafafa;--rink:#000;--rmute:#555;--rline:rgba(0,0,0,.1);
+  --rfont:"Space Grotesk Variable","Space Grotesk",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+
+/* navbar */
+.rnav{position:fixed;top:0;left:0;right:0;z-index:50;height:70px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+  padding:0 clamp(16px,2.2vw,32px);background:var(--rbg);font-family:var(--rfont);color:#000;border-bottom:1px solid var(--rline)}
+.rbrand{font-size:19px;font-weight:600;letter-spacing:-.01em;text-transform:uppercase;color:#000}
+.rnav-links{display:flex;gap:8px}
+.rnav-links a{padding:15px 24px;border-radius:16px;background:var(--rcard);font-size:14px;font-weight:500;color:#000;transition:background .25s,transform .25s}
+.rnav-links a:hover{background:#fff;transform:translateY(-1px);color:#000}
+.rnav[data-solid="0"]{background:transparent;border-color:transparent;color:#fff}
+.rnav[data-solid="0"] .rbrand{color:#fff}
+.rnav[data-solid="0"] .rnav-links a{background:rgba(255,255,255,.1);color:#fff}
+.rnav[data-solid="0"] .rnav-links a:hover{background:rgba(255,255,255,.2);color:#fff}
+.rnav-cta{justify-self:end}
+.rburger{display:none;justify-self:end;width:46px;height:46px;border-radius:14px;background:var(--rink);position:relative}
+.rburger span{position:absolute;left:14px;right:14px;height:2px;background:#fff;border-radius:2px;transition:transform .3s}
+.rburger span:first-child{top:18px}.rburger span:last-child{top:26px}
+.rburger[aria-expanded="true"] span:first-child{transform:translateY(4px) rotate(45deg)}
+.rburger[aria-expanded="true"] span:last-child{transform:translateY(-4px) rotate(-45deg)}
+@media(max-width:900px){
+  .rnav{grid-template-columns:1fr auto auto;gap:10px}
+  .rnav-cta{display:none}
+  .rburger{display:block}
+  .rnav-links{display:none;position:absolute;top:70px;left:0;right:0;flex-direction:column;padding:12px 16px 18px;background:var(--rbg);border-bottom:1px solid var(--rline)}
+  .rnav-links.open{display:flex}
 }
 
-/* ===== home page sections ===== */
-html{scroll-behavior:auto}
-.muted{color:var(--mute-dark)} .sm{font-size:13px} .center-t{text-align:center}
-.narrow{width:min(820px,100% - 48px)}
-.section.alt{background:#f8f8f8;border-block:1px solid var(--line-dark)}
-[data-rv]{opacity:0;transform:translate3d(0,28px,0);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
-[data-rv].in{opacity:1;transform:none}
-@media(prefers-reduced-motion:reduce){[data-rv]{opacity:1;transform:none;transition:none}}
+/* black pill button + white arrow chip */
+.rbtn{display:inline-flex;align-items:center;gap:18px;padding:6px 6px 6px 22px;border-radius:16px;font:inherit;font-family:var(--rfont);font-size:15px;font-weight:500;
+  color:#fff;background:linear-gradient(180deg,#000,#2b2b2b);border:3px solid var(--rbg);box-shadow:0 0 0 1px rgba(0,0,0,.9);cursor:pointer;transition:transform .25s}
+.rbtn i{display:grid;place-items:center;width:42px;height:42px;border-radius:11px;background:#fff;color:#000;transition:transform .3s}
+.rbtn:hover{transform:translateY(-2px)}
+.rbtn:hover i{transform:translateX(3px)}
+.rbtn-light{background:#fff;color:#000;border-color:rgba(255,255,255,.4);box-shadow:none}
+.rbtn-light i{background:#000;color:#fff}
 
-.bookbar-wrap{position:relative;z-index:10;background:var(--bg-light);padding:0 clamp(16px,4vw,48px);margin-top:-1px}
-.bookbar{position:relative;top:-48px;margin:0 auto;max-width:1100px;display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr auto;gap:12px;align-items:end;
-  padding:18px;border:1px solid var(--line-dark);border-radius:22px;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  box-shadow:0 30px 80px -30px rgba(0,0,0,.15)}
-.bookbar label{display:flex;flex-direction:column;gap:6px;min-width:0}
-.bookbar label span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute-dark)}
-.bookbar select,.bookbar input{height:50px;padding:0 14px;border-radius:12px;border:1px solid var(--line-dark);background:#ffffff;color:var(--fg-dark);font:inherit;font-size:15px;color-scheme:light;width:100%}
-.bookbar select:focus,.bookbar input:focus{outline:2px solid var(--red);outline-offset:1px}
-.bookbar-note{margin:-24px 0 0;text-align:center;font-size:13px;color:var(--mute-dark);padding-bottom:40px}
-@media(max-width:900px){.bookbar{grid-template-columns:1fr 1fr}.bookbar .btn{grid-column:1/-1}}
-@media(max-width:520px){.bookbar{grid-template-columns:1fr}}
+/* light page wrapper */
+.lt{position:relative;background:var(--rbg);color:var(--rink);font-family:var(--rfont);-webkit-font-smoothing:antialiased}
+.lt a{color:inherit;text-decoration:none}
+.lt .rbtn{color:#fff}
+.lt .rbtn-light{color:#000}
+.lt .r-pin{color:#fff}
+.lt h2,.lt h3,.lt p{margin:0}
+[data-rv]{opacity:0}
+@media(prefers-reduced-motion:reduce){[data-rv]{opacity:1}}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-stopped{overflow:hidden}
+.rprog{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#e11d2e;transform-origin:0 50%;pointer-events:none}
+.r-px{position:absolute;inset:0;overflow:hidden}
+.r-px img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform}
+.r-wrap{width:min(1376px,100% - clamp(32px,4.4vw,64px));margin:0 auto}
+.r-sec{padding:clamp(56px,9vw,120px) 0}
+.r-tight{padding-top:0}
+.r-eye{font-size:14px;text-transform:uppercase;letter-spacing:.02em;color:var(--rmute);margin-bottom:14px!important}
+.r-h2{font-size:clamp(36px,4.4vw,60px);line-height:1.04;font-weight:600;letter-spacing:-.025em}
+.r-p{font-size:16px;line-height:1.55;color:var(--rmute)}
+.r-head{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;margin-bottom:clamp(32px,4vw,56px)}
+.r-side{display:flex;flex-direction:column;align-items:flex-end;gap:18px;max-width:420px;text-align:right}
+@media(max-width:700px){.r-side{align-items:flex-start;text-align:left}}
 
-.strip{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 40px;padding:8px 24px 70px;background:var(--bg-light);font-size:14px;color:var(--mute-dark)}
-.strip div{display:flex;align-items:center;gap:10px}
-.strip i{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 10px var(--red-glow)}
+/* booking bar */
+.r-bookwrap{position:relative;z-index:10;padding:0 clamp(16px,4vw,48px)}
+.r-book{position:relative;top:-52px;margin:0 auto;max-width:1120px;display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr auto;gap:12px;align-items:end;
+  padding:16px;border-radius:26px;background:var(--rcard);border:1px solid var(--rline);box-shadow:0 30px 70px -30px rgba(0,0,0,.45)}
+.r-book label{display:flex;flex-direction:column;gap:6px;min-width:0}
+.r-book label span{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--rmute)}
+.r-book select,.r-book input{height:50px;padding:0 14px;border-radius:14px;border:1px solid var(--rline);background:#fff;color:var(--rink);font:inherit;font-family:var(--rfont);font-size:15px;width:100%}
+.r-book select:focus,.r-book input:focus{outline:2px solid #000;outline-offset:1px}
+.r-note{margin:-28px 0 0!important;text-align:center;font-size:13px;color:var(--rmute);padding-bottom:12px}
+@media(max-width:960px){.r-book{grid-template-columns:1fr 1fr}.r-book .rbtn{grid-column:1/-1;justify-content:space-between}}
+@media(max-width:520px){.r-book{grid-template-columns:1fr}}
 
-.head-row{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;flex-wrap:wrap}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;padding:5px;border:1px solid var(--line-dark);border-radius:999px;background:#f0f0f0}
-.tabs button{height:38px;padding:0 16px;border-radius:999px;font-size:14px;color:var(--mute-dark);transition:background .25s,color .25s}
-.tabs button:hover{color:var(--fg-dark)}
-.tabs button.on{background:var(--red);color:#fff}
+/* fleet */
+.r-tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.r-tabs button{height:42px;padding:0 20px;border-radius:14px;background:var(--rcard);font:inherit;font-family:var(--rfont);font-size:14px;font-weight:500;color:var(--rink);border:0;cursor:pointer;transition:background .25s,color .25s}
+.r-tabs button:hover{background:#fff}
+.r-tabs button.on{background:var(--rink);color:#fff}
+.r-fleet{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,1.6vw,24px)}
+@media(max-width:980px){.r-fleet{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.r-fleet{grid-template-columns:1fr}}
+.r-car{cursor:pointer}
+.r-car-img{position:relative;aspect-ratio:3/2;border-radius:24px;overflow:hidden;background:#d8d8d8;transition:box-shadow .3s}
+.r-car-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.r-car:hover .r-car-img img{transform:scale(1.04)}
+.r-car.sel .r-car-img{box-shadow:0 0 0 3px var(--rbg),0 0 0 5px #000}
+.r-chip{position:absolute;top:14px;left:14px;padding:6px 12px;border-radius:10px;background:rgba(255,255,255,.92);font-size:12px;font-weight:500}
+/* notched arrow chip (inverse corners) */
+.r-go{position:absolute;right:0;bottom:0;padding:7px 0 0 7px;background:var(--rbg);border-top-left-radius:22px;border:0;cursor:pointer}
+.r-go::before,.r-go::after{content:"";position:absolute;width:22px;height:22px;pointer-events:none;background:radial-gradient(circle at 0 0,transparent 21px,var(--rbg) 22px)}
+.r-go::before{right:0;top:-22px}
+.r-go::after{left:-22px;bottom:0}
+.r-go i{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:linear-gradient(180deg,#000,#2b2b2b);color:#fff;transition:transform .3s}
+.r-car:hover .r-go i{transform:translateX(2px)}
+.r-car.sel .r-go i{background:#fff;color:#000;box-shadow:inset 0 0 0 2px #000}
+.r-car-meta{display:flex;justify-content:space-between;gap:14px;padding:16px 8px 0}
+.r-car-meta h3{font-size:19px;font-weight:500;letter-spacing:-.01em}
+.r-car-meta p{font-size:14px;color:var(--rmute);margin-top:6px}
+.r-price{text-align:right;flex:none}
+.r-price strong{font-size:19px;font-weight:500;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.r-sample{margin-top:28px!important;text-align:center;font-size:12px;color:#8a8a8a}
 
-.fleet{margin-top:48px;display:grid;gap:18px;grid-template-columns:repeat(3,1fr)}
-@media(max-width:980px){.fleet{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.fleet{grid-template-columns:1fr}}
-.car{cursor:pointer;border:1px solid var(--line-dark);border-radius:22px;overflow:hidden;background:#ffffff;
-  transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .35s ease,border-color .3s,box-shadow .3s}
-.car:hover{transform:translateY(-6px)!important;border-color:var(--red);box-shadow:0 10px 30px -10px rgba(225,29,46,.2)}
-.car.sel{border-color:var(--red);box-shadow:0 0 0 1px var(--red),0 24px 60px -28px var(--red-glow)}
-.car-img{position:relative;aspect-ratio:16/10;display:grid;place-items:center;background:radial-gradient(70% 80% at 50% 90%,rgba(225,29,46,.08),transparent 70%),#f5f5f5}
-.car-img img{width:100%;height:100%;object-fit:cover}
-.car-art{width:82%;height:auto}
-.chip{position:absolute;top:14px;left:14px;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.06em;background:rgba(225,29,46,.1);color:#e11d2e;border:1px solid rgba(225,29,46,.3)}
-.car-body{padding:20px 20px 22px}
-.car-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.car-top h3{margin:0;font-size:20px;letter-spacing:-.02em;color:var(--fg-dark)}
-.specs{list-style:none;margin:14px 0 20px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
-.specs li{padding:5px 10px;border-radius:8px;background:rgba(0,0,0,.06);font-size:12px;color:var(--mute-dark)}
-.car-bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding-top:16px;border-top:1px solid var(--line-dark)}
-.car-bottom strong{font-size:22px;letter-spacing:-.02em;color:var(--fg-dark)}
-.car-bottom small{color:var(--mute-dark)}
-.sample{margin:28px 0 0;text-align:center;font-size:12px;color:rgba(26,26,26,.4)}
+/* bento */
+.r-split2{display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(24px,4vw,56px);align-items:start}
+@media(max-width:900px){.r-split2{grid-template-columns:1fr}}
+.r-bento{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.4vw,20px);align-items:start}
+.r-col{display:flex;flex-direction:column;gap:clamp(12px,1.4vw,20px)}
+.r-col:last-child{margin-top:clamp(0px,3vw,48px)}
+.r-tile{position:relative;margin:0;border-radius:22px;overflow:hidden;background:#000;color:#fff}
+.r-tile img{display:block;width:100%;height:100%;object-fit:cover;filter:brightness(.8)}
+.r-tile::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.65));pointer-events:none}
+.r-tile figcaption{position:absolute;left:20px;right:20px;bottom:18px;z-index:2;font-size:clamp(15px,1.4vw,19px);font-weight:500;line-height:1.2}
+.t1{aspect-ratio:1/1.2}.t3{aspect-ratio:1/.95}.t2{aspect-ratio:1/.7}.t4{aspect-ratio:1/1.2}
+.r-black::after{display:none}
+.r-ico{position:absolute;inset:0}
+.r-ico b{position:absolute;display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.28)}
+.r-ico b:nth-child(1){left:6%;top:10%}.r-ico b:nth-child(2){left:42%;top:8%}.r-ico b:nth-child(3){left:62%;top:34%}
 
-.steps{list-style:none;margin:56px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:18px;position:relative}
-@media(max-width:900px){.steps{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){.steps{grid-template-columns:1fr}}
-.steps li{padding-top:22px;border-top:1px solid var(--line-dark);position:relative}
-.steps li::before{content:"";position:absolute;top:-1px;left:0;width:44px;height:2px;background:var(--red);box-shadow:0 0 12px var(--red-glow)}
-.step-n{font-size:12px;letter-spacing:.2em;color:var(--red);font-weight:600}
-.steps h3{margin:34px 0 8px;font-size:24px;letter-spacing:-.02em;color:var(--fg-dark)}
-.steps p{margin:0;font-size:15px;line-height:1.6;color:var(--mute-dark)}
+/* steps + cards */
+.r-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.4vw,20px)}
+@media(max-width:900px){.r-steps{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.r-steps{grid-template-columns:1fr}}
+.r-steps li,.r-card{background:var(--rcard);border:1px solid var(--rline);border-radius:24px;padding:24px;min-height:250px;display:flex;flex-direction:column;transition:transform .35s ease,box-shadow .35s}
+.r-steps li:hover,.r-card:hover{transform:translateY(-5px)!important;box-shadow:0 24px 50px -30px rgba(0,0,0,.35)}
+.r-num{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:linear-gradient(180deg,#000,#2b2b2b);color:#fff;font-size:14px;font-weight:500}
+.r-steps h3,.r-card h3{margin-top:auto!important;font-size:24px;font-weight:500;letter-spacing:-.015em}
+.r-steps p,.r-card p{margin-top:10px!important;font-size:15px;line-height:1.55;color:var(--rmute);min-height:6.3em}
+.r-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.4vw,20px)}
+@media(max-width:980px){.r-grid4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.r-grid4{grid-template-columns:1fr}}
 
-.split{display:grid;grid-template-columns:1fr 440px;gap:clamp(32px,6vw,90px);align-items:center}
-@media(max-width:900px){.split{grid-template-columns:1fr}}
-.sum{padding:24px;border:1px solid var(--line-dark);border-radius:24px;background:#ffffff;box-shadow:0 40px 90px -40px rgba(225,29,46,.15)}
-.sum-head{display:flex;gap:16px;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--line-dark)}
-.sum-art{width:110px;flex:none;border-radius:14px;background:#f5f5f5;padding:6px}
-.sum-head h3{margin:0 0 4px;font-size:20px;letter-spacing:-.02em;color:var(--fg-dark)}
-.sum dl{margin:0;padding:8px 0}
-.sum dl div{display:flex;justify-content:space-between;gap:16px;padding:11px 0;font-size:14px;border-bottom:1px dashed rgba(0,0,0,.08)}
-.sum dt{color:var(--mute-dark)} .sum dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;color:var(--fg-dark)}
-.toggle{display:flex;align-items:center;gap:12px;margin:14px 0;font-size:14px;cursor:pointer;color:var(--fg-dark)}
-.toggle input{position:absolute;opacity:0;pointer-events:none}
-.sw{position:relative;flex:none;width:42px;height:24px;border-radius:99px;background:#ddd;transition:background .25s}
-.sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .25s}
-.toggle input:checked + .sw{background:var(--red)}
-.toggle input:checked + .sw::after{transform:translateX(18px)}
-.toggle input:focus-visible + .sw{outline:2px solid var(--red);outline-offset:2px}
-.sum-total{display:flex;justify-content:space-between;align-items:baseline;padding:16px 0 18px;border-top:1px solid var(--line-dark)}
-.sum-total strong{font-size:32px;letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--fg-dark)}
-.btn.wide{width:100%}
-.sum .sm{margin:12px 0 0}
+/* summary */
+.r-split3{display:grid;grid-template-columns:1fr minmax(0,560px);gap:clamp(24px,5vw,80px);align-items:center}
+@media(max-width:960px){.r-split3{grid-template-columns:1fr}}
+.r-sum{background:var(--rcard);border:1px solid var(--rline);border-radius:28px;padding:10px;box-shadow:0 40px 80px -50px rgba(0,0,0,.5)}
+.r-sum-img{border-radius:20px;overflow:hidden;aspect-ratio:16/8;background:#d8d8d8}
+.r-sum-img img{width:100%;height:100%;object-fit:cover;display:block}
+.r-sum-body{padding:20px 14px 14px}
+.r-sum-title h3{font-size:24px;font-weight:500;letter-spacing:-.015em}
+.r-sum-title p{margin-top:6px;font-size:14px;color:var(--rmute)}
+.r-sum dl{margin:14px 0 4px;padding:0}
+.r-sum dl div{display:flex;justify-content:space-between;gap:16px;padding:12px 0;font-size:15px;border-bottom:1px dashed var(--rline)}
+.r-sum dt{color:var(--rmute)}.r-sum dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
+.r-toggle{display:flex;align-items:center;gap:12px;margin:16px 0;font-size:15px;cursor:pointer}
+.r-toggle small{color:var(--rmute);font-size:13px}
+.r-toggle input{position:absolute;opacity:0;pointer-events:none}
+.r-toggle .sw{position:relative;flex:none;width:44px;height:26px;border-radius:99px;background:#cfcfcf;transition:background .25s}
+.r-toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .25s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.r-toggle input:checked + .sw{background:#000}
+.r-toggle input:checked + .sw::after{transform:translateX(18px)}
+.r-toggle input:focus-visible + .sw{outline:2px solid #000;outline-offset:2px}
+.r-total{display:flex;justify-content:space-between;align-items:baseline;padding:16px 0 18px;border-top:1px solid var(--rline)}
+.r-total span{color:var(--rmute)}
+.r-total strong{font-size:34px;font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.r-sum .rbtn{width:100%;justify-content:space-between}
+.r-fine{margin-top:12px!important;text-align:center;font-size:13px;color:var(--rmute)}
 
-.faq{margin-top:40px;border-top:1px solid var(--line-dark)}
-.qa{border-bottom:1px solid var(--line-dark)}
-.qa button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:24px 0;text-align:left;font-size:clamp(16px,2vw,20px);font-weight:600;letter-spacing:-.01em;color:var(--fg-dark)}
-.qa svg{flex:none;color:var(--red);transition:transform .35s}
-.qa.open svg{transform:rotate(45deg)}
-.qa-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s ease}
-.qa.open .qa-body{grid-template-rows:1fr}
-.qa-body p{overflow:hidden;margin:0;color:var(--mute-dark);line-height:1.7;font-size:16px}
-.qa.open .qa-body p{padding-bottom:24px}
+/* CTA banner */
+.r-cta{position:relative;border-radius:32px;overflow:hidden;min-height:clamp(340px,40vw,520px);background:#111;color:#fff}
+.r-cta img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.75)}
+.r-cta::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),transparent 70%)}
+.r-cta-in{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;gap:28px;justify-content:center;min-height:inherit;padding:clamp(28px,5vw,72px)}
+.r-cta h2{font-size:clamp(40px,6vw,88px);line-height:1;font-weight:600;letter-spacing:-.03em}
 
-.final{border-top:1px solid var(--line-dark)}
-.footer{background:#ffffff;border-top:1px solid var(--line-dark);padding:64px 0 28px;color:var(--fg-dark)}
-.foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px}
-@media(max-width:700px){.foot-grid{grid-template-columns:1fr 1fr}}
-.foot-grid h4{margin:0 0 14px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute-dark);font-weight:600}
-.foot-grid a{display:block;margin-bottom:10px;font-size:14px;color:rgba(26,26,26,.8)}
-.foot-grid a:hover{color:var(--red)}
-.footer .foot{text-align:center;margin:56px 0 0}
+/* FAQ */
+.faqs{align-items:start}
+.r-faq{border-top:1px solid var(--rline)}
+.r-qa{border-bottom:1px solid var(--rline)}
+.r-qa button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 4px;text-align:left;font:inherit;font-family:var(--rfont);font-size:clamp(16px,1.6vw,19px);font-weight:500;color:var(--rink);background:none;border:0;cursor:pointer}
+.r-qa button svg{flex:none;transition:transform .35s}
+.r-qa.open button svg{transform:rotate(270deg)!important}
+.r-qa-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s ease}
+.r-qa.open .r-qa-body{grid-template-rows:1fr}
+.r-qa-body p{overflow:hidden;color:var(--rmute);line-height:1.65;font-size:16px;padding-inline:4px;max-width:60ch}
+.r-qa.open .r-qa-body p{padding-bottom:24px}
+
+/* footer */
+.r-foot{border-top:1px solid var(--rline);padding:clamp(40px,6vw,72px) 0 28px}
+.r-foot-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:start}
+@media(max-width:800px){.r-foot-grid{grid-template-columns:1fr}}
+.r-big{font-size:clamp(56px,9vw,128px);line-height:.95;font-weight:600;letter-spacing:-.04em}
+.r-foot-btns{display:flex;gap:10px;align-items:center}
+.r-pin{display:grid;place-items:center;width:54px;height:54px;border-radius:16px;background:linear-gradient(180deg,#000,#2b2b2b);color:#fff}
+.r-pills{display:grid;grid-template-columns:1fr 1fr;gap:10px;justify-items:start;max-width:520px;justify-self:end;width:100%}
+@media(max-width:800px){.r-pills{justify-self:start}}
+.r-pills a{padding:15px 24px;border-radius:16px;background:var(--rcard);font-size:14px;font-weight:500;transition:background .25s}
+.r-pills a:hover{background:#fff}
+.r-legal{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:clamp(40px,6vw,80px);padding-top:20px;border-top:1px solid var(--rline);font-size:13px;color:var(--rmute)}
+.r-legal a:hover{color:#000}
+
+/* testimonials + team */
+.r-quotes{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.6vw,24px);margin-bottom:clamp(28px,4vw,48px)}
+@media(max-width:800px){.r-quotes{grid-template-columns:1fr}}
+.r-quote{margin:0;background:var(--rcard);border:1px solid var(--rline);border-radius:24px;padding:28px 26px;min-height:220px;display:flex;flex-direction:column}
+.r-quote p{font-size:clamp(18px,1.7vw,22px);line-height:1.4;letter-spacing:-.02em;font-weight:500}
+.r-quote footer{margin-top:auto;padding-top:22px;display:flex;flex-direction:column;gap:4px}
+.r-quote strong{font-weight:500}
+.r-quote span{font-size:14px;color:var(--rmute)}
+.r-team{display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:clamp(12px,1.6vw,24px);align-items:stretch}
+@media(max-width:900px){.r-team{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.r-team{grid-template-columns:1fr}}
+.r-person{margin:0;border-radius:24px;overflow:hidden;background:#ddd;position:relative;min-height:340px}
+.r-person img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.92)}
+.r-person figcaption{position:absolute;left:18px;right:18px;bottom:18px;color:#fff;display:flex;flex-direction:column;gap:4px;text-shadow:0 8px 24px rgba(0,0,0,.45)}
+.r-person strong{font-size:18px;font-weight:500}
+.r-person span{font-size:13px;opacity:.85}
+.r-stats{background:var(--rink);color:#fff;border-radius:24px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;min-height:340px}
+.r-stats div{display:flex;flex-direction:column;gap:4px}
+.r-stats b{font-size:clamp(36px,4vw,52px);font-weight:600;letter-spacing:-.04em;line-height:1}
+.r-stats span{color:rgba(255,255,255,.65);font-size:14px}
 `;
