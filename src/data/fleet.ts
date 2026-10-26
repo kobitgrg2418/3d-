@@ -1,0 +1,173 @@
+export type Body = "SUV" | "Sport" | "Coupe" | "Wagon";
+
+export type Car = {
+  id: string;
+  name: string;
+  year: number;
+  body: Body;
+  seats: number;
+  gear: "Auto" | "Manual";
+  fuel: string;
+  bags: number;
+  price: number;
+  tag?: string;
+  image: string;
+  topSpeed?: string;
+  acceleration?: string;
+  power?: string;
+  description?: string;
+};
+
+export const FLEET: Car[] = [
+  {
+    id: "c1",
+    name: "Range Rover Sport",
+    year: 2024,
+    body: "SUV",
+    seats: 5,
+    gear: "Auto",
+    fuel: "Petrol",
+    bags: 4,
+    price: 14500,
+    tag: "Popular",
+    image: "/rent/range-rover-sport.png",
+    topSpeed: "242 km/h",
+    acceleration: "5.7s",
+    power: "400 HP",
+    description: "Refined luxury meets assertive all-terrain performance with a commanding road presence.",
+  },
+  {
+    id: "c2",
+    name: "Porsche 911 GT3 RS",
+    year: 2023,
+    body: "Sport",
+    seats: 2,
+    gear: "Auto",
+    fuel: "Petrol",
+    bags: 1,
+    price: 32000,
+    tag: "Performance icon",
+    image: "/rent/porsche-gt3.webp",
+    topSpeed: "296 km/h",
+    acceleration: "3.2s",
+    power: "518 HP",
+    description: "Naturally aspirated precision track weapon homologated directly for the street.",
+  },
+  {
+    id: "c3",
+    name: "Lamborghini Urus",
+    year: 2024,
+    body: "SUV",
+    seats: 5,
+    gear: "Auto",
+    fuel: "Petrol",
+    bags: 4,
+    price: 36000,
+    tag: "New arrival",
+    image: "/rent/urus.webp",
+    topSpeed: "305 km/h",
+    acceleration: "3.5s",
+    power: "657 HP",
+    description: "Super sports car soul combined with the muscular capability and daily utility of an SUV.",
+  },
+  {
+    id: "c4",
+    name: "McLaren 720S Spider",
+    year: 2023,
+    body: "Sport",
+    seats: 2,
+    gear: "Auto",
+    fuel: "Petrol",
+    bags: 1,
+    price: 42000,
+    image: "/rent/mclaren.webp",
+    topSpeed: "341 km/h",
+    acceleration: "2.9s",
+    power: "710 HP",
+    description: "Hypercar aerodynamics and drop-top exhilaration powered by a twin-turbocharged V8.",
+  },
+  {
+    id: "c5",
+    name: "BMW M4 Competition",
+    year: 2024,
+    body: "Coupe",
+    seats: 4,
+    gear: "Auto",
+    fuel: "Petrol",
+    bags: 2,
+    price: 17500,
+    image: "/rent/aurvane.png",
+    topSpeed: "290 km/h",
+    acceleration: "3.8s",
+    power: "503 HP",
+    description: "Iconic motorsport pedigree tuned for aggressive cornering agility and pure cockpit thrill.",
+  },
+  {
+    id: "c6",
+    name: "Aston Martin DB12",
+    year: 2024,
+    body: "Coupe",
+    seats: 4,
+    gear: "Auto",
+    fuel: "Petrol",
+    bags: 2,
+    price: 34000,
+    tag: "Signature",
+    image: "/rent/green-gt.webp",
+    topSpeed: "325 km/h",
+    acceleration: "3.6s",
+    power: "671 HP",
+    description: "The world's first Super Tourer. Impeccable craftsmanship and raw, unrelenting power.",
+  },
+  {
+    id: "c7",
+    name: "Mercedes-AMG G63",
+    year: 2024,
+    body: "SUV",
+    seats: 5,
+    gear: "Auto",
+    fuel: "Petrol",
+    bags: 4,
+    price: 24000,
+    image: "/rent/veltora.png",
+    topSpeed: "240 km/h",
+    acceleration: "4.5s",
+    power: "577 HP",
+    description: "Unrivaled off-road dominance paired with handcrafted luxury and an unmistakable V8 rumble.",
+  },
+  {
+    id: "c8",
+    name: "Audi RS6 Avant",
+    year: 2023,
+    body: "Wagon",
+    seats: 5,
+    gear: "Auto",
+    fuel: "Petrol",
+    bags: 5,
+    price: 21000,
+    image: "/rent/krynox.png",
+    topSpeed: "305 km/h",
+    acceleration: "3.6s",
+    power: "591 HP",
+    description: "The ultimate hyper-wagon: effortless touring space engineered with fierce twin-turbo speed.",
+  },
+  {
+    id: "c9",
+    name: "Range Rover Velar",
+    year: 2024,
+    body: "SUV",
+    seats: 5,
+    gear: "Auto",
+    fuel: "Diesel",
+    bags: 4,
+    price: 11500,
+    tag: "Best value",
+    image: "/rent/pharyx.png",
+    topSpeed: "217 km/h",
+    acceleration: "7.1s",
+    power: "204 HP",
+    description: "Minimalist, reductive exterior architecture with calm modern interior composure.",
+  },
+];
+
+export const BODIES: ("All" | Body)[] = ["All", "SUV", "Sport", "Coupe", "Wagon"];

@@ -513,7 +513,7 @@ export default function Page() {
       <nav className="rnav" ref={navRef} data-solid="0">
         <a className="rbrand" href="#top">30Rentals</a>
         <div className={`rnav-links ${menu ? "open" : ""}`} onClick={() => setMenu(false)}>
-          {[["Fleet", "#fleet"], ["How it works", "#how"], ["Experience", "#experience"], ["Owners", "#owners"], ["FAQ", "#faq"]].map(([l, h]) => (
+          {[["Fleet", "/fleet"], ["How it works", "#how"], ["Experience", "#experience"], ["Owners", "#owners"], ["FAQ", "#faq"]].map(([l, h]) => (
             <a key={l} href={h}>{l}</a>
           ))}
         </div>
