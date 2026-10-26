@@ -4,9 +4,10 @@ import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { FLEET, BODIES, Body, Car } from "@/data/fleet";
 
-const ArrowIcon = () => (
+/* Icons copied from Framer Carent theme */
+const ArrowTopRight = () => (
   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4 12L12 4M12 4H6M12 4V10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M4.5 11.5L11.5 4.5M11.5 4.5H6.5M11.5 4.5V9.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -17,11 +18,22 @@ const SearchIcon = () => (
   </svg>
 );
 
+const FuelPumpIcon = () => (
+  <img src="/assets/framerusercontent.com/images/Ysarex2MThrzXe9gykDpblExQ.svg" alt="Fuel" width="16" height="16" />
+);
+
+const GearboxIcon = () => (
+  <img src="/assets/framerusercontent.com/images/5gO6ukdDexfwlOBIRoBPehfI4.svg" alt="Gearbox" width="16" height="16" />
+);
+
+const SeatsIcon = () => (
+  <img src="/assets/framerusercontent.com/images/653DT4Z6snkyqJSs9g7PBNX3Zks.svg" alt="Seats" width="16" height="16" />
+);
+
 export default function FleetPage() {
   const [selectedBody, setSelectedBody] = useState<"All" | Body>("All");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"featured" | "price-asc" | "price-desc">("featured");
-  const [activeCar, setActiveCar] = useState<Car | null>(null);
 
   const filteredCars = useMemo(() => {
     return FLEET.filter((car) => {
@@ -41,139 +53,164 @@ export default function FleetPage() {
   const fmt = (n: number) => `NPR ${n.toLocaleString("en-IN")}`;
 
   return (
-    <div className="fleet-page-wrapper">
+    <div className="carent-root">
       <style>{`
-        .fleet-page-wrapper {
+        .carent-root {
           min-height: 100vh;
-          background: #0c0d0e;
-          color: #f3f4f6;
-          font-family: var(--rfont, system-ui, -apple-system, sans-serif);
-          padding-bottom: 80px;
+          background: #ffffff;
+          color: #0b0f19;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          -webkit-font-smoothing: antialiased;
         }
 
-        /* Top Nav */
-        .fleet-nav {
+        /* ------------------ Carent Navbar ------------------ */
+        .carent-nav {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 20px clamp(20px, 4vw, 60px);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-          background: rgba(12, 13, 14, 0.85);
-          backdrop-filter: blur(12px);
+          padding: 18px clamp(20px, 4vw, 80px);
+          background: #ffffff;
+          border-bottom: 1px solid #f0f2f5;
           position: sticky;
           top: 0;
-          z-index: 40;
+          z-index: 50;
         }
 
-        .fleet-brand {
-          font-size: 20px;
-          font-weight: 700;
-          letter-spacing: -0.02em;
-          text-transform: uppercase;
-          color: #fff;
-          text-decoration: none;
-        }
-
-        .fleet-nav-links {
+        .carent-brand {
           display: flex;
           align-items: center;
-          gap: clamp(16px, 2.5vw, 36px);
+          gap: 10px;
+          text-decoration: none;
+          font-size: 22px;
+          font-weight: 800;
+          letter-spacing: -0.03em;
+          color: #0b0f19;
         }
 
-        .fleet-nav-links a {
-          color: rgba(255, 255, 255, 0.7);
+        .carent-brand-badge {
+          background: #0b0f19;
+          color: #fff;
+          font-size: 11px;
+          font-weight: 700;
+          padding: 2px 7px;
+          border-radius: 6px;
+          text-transform: uppercase;
+        }
+
+        .carent-nav-links {
+          display: flex;
+          align-items: center;
+          gap: 32px;
+        }
+
+        .carent-nav-links a {
+          color: #525866;
           text-decoration: none;
-          font-size: 14px;
+          font-size: 15px;
           font-weight: 500;
           transition: color 0.2s;
         }
 
-        .fleet-nav-links a:hover,
-        .fleet-nav-links a.active {
-          color: #ffffff;
+        .carent-nav-links a:hover,
+        .carent-nav-links a.active {
+          color: #0b0f19;
+          font-weight: 600;
         }
 
-        .fleet-nav-btn {
-          background: #ffffff;
-          color: #000000;
-          padding: 8px 18px;
+        .carent-nav-action {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: #0b0f19;
+          color: #ffffff;
+          padding: 10px 22px;
           border-radius: 999px;
-          font-size: 13px;
+          font-size: 14px;
           font-weight: 600;
           text-decoration: none;
           transition: transform 0.2s, background 0.2s;
         }
 
-        .fleet-nav-btn:hover {
+        .carent-nav-action:hover {
+          background: #232733;
           transform: translateY(-1px);
-          background: #e5e5e5;
         }
 
-        /* Hero Header */
-        .fleet-hero {
-          padding: 60px clamp(20px, 4vw, 60px) 30px;
-          max-width: 1400px;
+        /* ------------------ Header & Title ------------------ */
+        .carent-hero-section {
+          max-width: 1320px;
           margin: 0 auto;
+          padding: 56px clamp(20px, 4vw, 80px) 24px;
         }
 
-        .fleet-eyebrow {
-          color: rgba(255, 255, 255, 0.5);
+        .carent-breadcrumb {
+          display: flex;
+          align-items: center;
+          gap: 8px;
           font-size: 13px;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          font-weight: 600;
-          margin-bottom: 12px;
+          color: #868c98;
+          margin-bottom: 14px;
         }
 
-        .fleet-title-row {
+        .carent-breadcrumb a {
+          color: #868c98;
+          text-decoration: none;
+        }
+
+        .carent-breadcrumb a:hover {
+          color: #0b0f19;
+        }
+
+        .carent-title-row {
           display: flex;
           justify-content: space-between;
           align-items: flex-end;
           flex-wrap: wrap;
-          gap: 20px;
+          gap: 24px;
           margin-bottom: 36px;
         }
 
-        .fleet-title {
-          font-size: clamp(32px, 4vw, 54px);
-          font-weight: 700;
-          letter-spacing: -0.03em;
-          line-height: 1.05;
+        .carent-main-title {
+          font-size: clamp(34px, 4.2vw, 56px);
+          font-weight: 800;
+          letter-spacing: -0.035em;
+          color: #0b0f19;
           margin: 0;
-          color: #fff;
+          line-height: 1.1;
         }
 
-        .fleet-subtitle {
-          color: rgba(255, 255, 255, 0.6);
+        .carent-main-desc {
+          color: #525866;
           font-size: 16px;
-          max-width: 420px;
+          max-width: 460px;
           margin: 0;
-          line-height: 1.5;
+          line-height: 1.55;
         }
 
-        /* Filters Bar */
-        .fleet-controls {
+        /* ------------------ Filter Bar ------------------ */
+        .carent-filter-bar {
           display: flex;
           flex-wrap: wrap;
           justify-content: space-between;
+          align-items: center;
           gap: 16px;
-          padding: 20px 0;
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          padding: 18px 0;
+          border-top: 1px solid #f0f2f5;
+          border-bottom: 1px solid #f0f2f5;
         }
 
-        .fleet-tabs {
+        .carent-pill-group {
           display: flex;
           gap: 8px;
           overflow-x: auto;
           scrollbar-width: none;
         }
 
-        .fleet-tab-btn {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          color: rgba(255, 255, 255, 0.7);
-          padding: 8px 18px;
+        .carent-pill {
+          background: #f4f5f7;
+          border: 1px solid transparent;
+          color: #525866;
+          padding: 9px 20px;
           border-radius: 999px;
           font-size: 14px;
           font-weight: 500;
@@ -182,365 +219,323 @@ export default function FleetPage() {
           white-space: nowrap;
         }
 
-        .fleet-tab-btn:hover {
-          color: #fff;
-          background: rgba(255, 255, 255, 0.1);
+        .carent-pill:hover {
+          background: #ebeef2;
+          color: #0b0f19;
         }
 
-        .fleet-tab-btn.active {
-          background: #fff;
-          color: #000;
-          border-color: #fff;
+        .carent-pill.active {
+          background: #0b0f19;
+          color: #ffffff;
         }
 
-        .fleet-search-sort {
+        .carent-controls-right {
           display: flex;
+          align-items: center;
           gap: 12px;
           flex-wrap: wrap;
         }
 
-        .fleet-search-box {
+        .carent-search-wrap {
           position: relative;
           display: flex;
           align-items: center;
         }
 
-        .fleet-search-box input {
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: #fff;
-          padding: 8px 14px 8px 36px;
+        .carent-search-wrap input {
+          background: #f4f5f7;
+          border: 1px solid #e5e7eb;
+          color: #0b0f19;
+          padding: 9px 16px 9px 38px;
           border-radius: 999px;
-          font-size: 13px;
+          font-size: 14px;
           outline: none;
-          transition: border-color 0.2s;
+          transition: border-color 0.2s, background 0.2s;
         }
 
-        .fleet-search-box input:focus {
-          border-color: rgba(255, 255, 255, 0.4);
+        .carent-search-wrap input:focus {
+          border-color: #0b0f19;
+          background: #fff;
         }
 
-        .fleet-search-box svg {
+        .carent-search-wrap svg {
           position: absolute;
-          left: 12px;
-          color: rgba(255, 255, 255, 0.4);
+          left: 14px;
+          color: #868c98;
         }
 
-        .fleet-sort-select {
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: #fff;
-          padding: 8px 14px;
+        .carent-select {
+          background: #f4f5f7;
+          border: 1px solid #e5e7eb;
+          color: #0b0f19;
+          padding: 9px 16px;
           border-radius: 999px;
-          font-size: 13px;
+          font-size: 14px;
           outline: none;
           cursor: pointer;
         }
 
-        .fleet-sort-select option {
-          background: #1a1c1e;
-          color: #fff;
-        }
-
-        /* Grid */
-        .fleet-grid {
+        /* ------------------ Carent Car Cards Grid ------------------ */
+        .carent-cars-grid {
+          max-width: 1320px;
+          margin: 40px auto 80px;
+          padding: 0 clamp(20px, 4vw, 80px);
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-          gap: 28px;
-          max-width: 1400px;
-          margin: 36px auto 0;
-          padding: 0 clamp(20px, 4vw, 60px);
+          gap: 32px;
         }
 
         @media (max-width: 480px) {
-          .fleet-grid {
+          .carent-cars-grid {
             grid-template-columns: 1fr;
           }
         }
 
-        .car-card {
-          background: #141618;
-          border: 1px solid rgba(255, 255, 255, 0.07);
+        .carent-card {
+          background: #ffffff;
+          border: 1px solid #eaecf0;
           border-radius: 24px;
           overflow: hidden;
-          transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+          transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
           display: flex;
           flex-direction: column;
+          position: relative;
         }
 
-        .car-card:hover {
-          transform: translateY(-4px);
-          border-color: rgba(255, 255, 255, 0.2);
-          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+        .carent-card:hover {
+          transform: translateY(-5px);
+          border-color: #d0d5dd;
+          box-shadow: 0 20px 40px -15px rgba(11, 15, 25, 0.08);
         }
 
-        .car-image-container {
+        .carent-card-img-wrap {
           position: relative;
           width: 100%;
-          height: 240px;
-          background: radial-gradient(circle at center, rgba(255,255,255,0.06) 0%, rgba(0,0,0,0) 70%), #101113;
+          height: 260px;
+          background: radial-gradient(circle at center, #f8f9fb 0%, #edf0f5 100%);
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 20px;
+          padding: 0;
           overflow: hidden;
         }
 
-        .car-image-container img {
-          max-width: 95%;
-          max-height: 85%;
-          object-fit: contain;
+        .carent-card-img-wrap img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
           transition: transform 0.35s ease;
-          filter: drop-shadow(0 15px 15px rgba(0,0,0,0.6));
         }
 
-        .car-card:hover .car-image-container img {
+        .carent-card:hover .carent-card-img-wrap img {
           transform: scale(1.05);
         }
 
-        .car-tag {
+        .carent-card-tag {
           position: absolute;
-          top: 16px;
-          left: 16px;
-          background: rgba(255, 255, 255, 0.12);
-          backdrop-filter: blur(8px);
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          color: #fff;
+          top: 18px;
+          left: 18px;
+          background: #0b0f19;
+          color: #ffffff;
           font-size: 11px;
-          font-weight: 600;
-          letter-spacing: 0.05em;
+          font-weight: 700;
+          letter-spacing: 0.04em;
           text-transform: uppercase;
-          padding: 4px 10px;
+          padding: 4px 12px;
           border-radius: 999px;
+          z-index: 2;
         }
 
-        .car-content {
+        .carent-card-badge {
+          position: absolute;
+          top: 18px;
+          right: 18px;
+          background: #ffffff;
+          border: 1px solid #eaecf0;
+          color: #525866;
+          font-size: 11px;
+          font-weight: 600;
+          padding: 4px 10px;
+          border-radius: 8px;
+          z-index: 2;
+        }
+
+        .carent-card-body {
           padding: 24px;
           display: flex;
           flex-direction: column;
           flex-grow: 1;
         }
 
-        .car-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          margin-bottom: 8px;
-        }
-
-        .car-name {
+        .carent-card-title {
           font-size: 20px;
           font-weight: 700;
-          color: #fff;
-          margin: 0;
-          letter-spacing: -0.01em;
+          color: #0b0f19;
+          margin: 0 0 6px 0;
+          letter-spacing: -0.02em;
         }
 
-        .car-body-badge {
-          font-size: 11px;
-          color: rgba(255, 255, 255, 0.6);
-          background: rgba(255, 255, 255, 0.08);
-          padding: 3px 8px;
-          border-radius: 6px;
-          font-weight: 500;
+        .carent-card-desc {
+          font-size: 13.5px;
+          color: #667085;
+          line-height: 1.5;
+          margin: 0 0 18px 0;
+          min-height: 40px;
         }
 
-        .car-desc {
-          font-size: 13px;
-          color: rgba(255, 255, 255, 0.55);
-          line-height: 1.45;
-          margin: 6px 0 16px;
-          min-height: 38px;
-        }
-
-        .car-specs {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 8px;
-          padding: 12px 0;
-          border-top: 1px solid rgba(255, 255, 255, 0.06);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-          margin-bottom: 20px;
-        }
-
-        .spec-item {
+        .carent-card-specs {
           display: flex;
-          flex-direction: column;
+          align-items: center;
+          justify-content: space-between;
+          padding: 14px 0;
+          border-top: 1px solid #f2f4f7;
+          border-bottom: 1px solid #f2f4f7;
+          margin-bottom: 22px;
         }
 
-        .spec-label {
-          font-size: 11px;
-          color: rgba(255, 255, 255, 0.4);
-          text-transform: uppercase;
-        }
-
-        .spec-val {
+        .carent-spec-badge {
+          display: flex;
+          align-items: center;
+          gap: 6px;
           font-size: 13px;
-          font-weight: 600;
-          color: rgba(255, 255, 255, 0.9);
-          margin-top: 2px;
+          font-weight: 500;
+          color: #344054;
         }
 
-        .car-footer {
+        .carent-card-footer {
           margin-top: auto;
           display: flex;
           align-items: center;
           justify-content: space-between;
         }
 
-        .price-group {
+        .carent-card-price {
           display: flex;
           flex-direction: column;
         }
 
-        .price-val {
+        .carent-price-val {
           font-size: 22px;
-          font-weight: 700;
-          color: #fff;
-          letter-spacing: -0.02em;
+          font-weight: 800;
+          color: #0b0f19;
+          letter-spacing: -0.03em;
         }
 
-        .price-period {
+        .carent-price-sub {
           font-size: 12px;
-          color: rgba(255, 255, 255, 0.45);
+          color: #667085;
         }
 
-        .card-action-btn {
+        .carent-book-btn {
           display: inline-flex;
           align-items: center;
-          gap: 6px;
-          background: #ffffff;
-          color: #000000;
-          padding: 10px 18px;
+          gap: 8px;
+          background: #0b0f19;
+          color: #ffffff;
+          padding: 11px 20px;
           border-radius: 999px;
-          font-size: 13px;
+          font-size: 13.5px;
           font-weight: 600;
-          border: none;
-          cursor: pointer;
-          transition: transform 0.2s, background 0.2s;
           text-decoration: none;
+          transition: all 0.2s ease;
         }
 
-        .card-action-btn:hover {
-          background: #e6e6e6;
+        .carent-book-btn:hover {
+          background: #232733;
           transform: translateY(-1px);
         }
 
-        /* Modal Overlay */
-        .modal-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.75);
-          backdrop-filter: blur(8px);
+        /* ------------------ Carent Footer ------------------ */
+        .carent-footer {
+          border-top: 1px solid #f0f2f5;
+          padding: 60px clamp(20px, 4vw, 80px) 40px;
+          background: #ffffff;
+        }
+
+        .carent-footer-inner {
+          max-width: 1320px;
+          margin: 0 auto;
           display: flex;
+          justify-content: space-between;
           align-items: center;
-          justify-content: center;
-          padding: 20px;
-          z-index: 100;
+          flex-wrap: wrap;
+          gap: 24px;
         }
 
-        .modal-card {
-          background: #16181b;
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          border-radius: 28px;
-          max-width: 650px;
-          width: 100%;
-          overflow: hidden;
-          position: relative;
-          box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+        .carent-footer-copy {
+          color: #868c98;
+          font-size: 14px;
         }
 
-        .modal-close {
-          position: absolute;
-          top: 18px;
-          right: 18px;
-          background: rgba(255, 255, 255, 0.1);
-          border: none;
-          color: #fff;
-          width: 34px;
-          height: 34px;
-          border-radius: 50%;
-          cursor: pointer;
-          font-size: 18px;
+        .carent-footer-links {
           display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 2;
+          gap: 24px;
         }
 
-        .modal-body {
-          padding: 30px;
+        .carent-footer-links a {
+          color: #525866;
+          text-decoration: none;
+          font-size: 14px;
         }
 
-        .modal-img-wrap {
-          height: 220px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, rgba(0,0,0,0) 70%), #0e1012;
-          border-radius: 20px;
-          margin-bottom: 24px;
-        }
-
-        .modal-img-wrap img {
-          max-width: 90%;
-          max-height: 85%;
-          object-fit: contain;
-          filter: drop-shadow(0 20px 20px rgba(0,0,0,0.7));
-        }
-
-        .modal-specs-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 12px;
-          background: rgba(255, 255, 255, 0.04);
-          padding: 16px;
-          border-radius: 16px;
-          margin: 20px 0;
+        .carent-footer-links a:hover {
+          color: #0b0f19;
         }
       `}</style>
 
-      {/* Nav */}
-      <nav className="fleet-nav">
-        <Link href="/" className="fleet-brand">30Rentals</Link>
-        <div className="fleet-nav-links">
+      {/* Carent Navbar */}
+      <nav className="carent-nav">
+        <Link href="/" className="carent-brand">
+          30Rentals
+          <span className="carent-brand-badge">FLEET</span>
+        </Link>
+        <div className="carent-nav-links">
           <Link href="/">Home</Link>
-          <Link href="/fleet" className="active">Fleet</Link>
+          <Link href="/fleet" className="active">Cars</Link>
           <Link href="/#how">How it works</Link>
           <Link href="/#experience">Experience</Link>
           <Link href="/#faq">FAQ</Link>
         </div>
-        <Link href="/#booking" className="fleet-nav-btn">Book Now</Link>
+        <Link href="/#booking" className="carent-nav-action">
+          Book now
+          <ArrowTopRight />
+        </Link>
       </nav>
 
       {/* Hero Header */}
-      <div className="fleet-hero">
-        <p className="fleet-eyebrow">Executive & Exotic Collection</p>
-        <div className="fleet-title-row">
+      <section className="carent-hero-section">
+        <div className="carent-breadcrumb">
+          <Link href="/">Home</Link>
+          <span>/</span>
+          <span style={{ color: "#0b0f19", fontWeight: 600 }}>Cars</span>
+        </div>
+
+        <div className="carent-title-row">
           <div>
-            <h1 className="fleet-title">Available Fleet</h1>
+            <h1 className="carent-main-title">Explore Our Fleet</h1>
           </div>
-          <p className="fleet-subtitle">
-            Every vehicle is thoroughly inspected, fully insured, and prepared with pristine attention to detail.
+          <p className="carent-main-desc">
+            Choose from an elite portfolio of sports cars, luxury grand tourers, and executive SUVs maintained to peak perfection.
           </p>
         </div>
 
-        {/* Controls */}
-        <div className="fleet-controls">
-          <div className="fleet-tabs">
-            {BODIES.map((b) => (
+        {/* Filter & Search Bar */}
+        <div className="carent-filter-bar">
+          <div className="carent-pill-group">
+            {BODIES.map((body) => (
               <button
-                key={b}
-                onClick={() => setSelectedBody(b)}
-                className={`fleet-tab-btn ${selectedBody === b ? "active" : ""}`}
+                key={body}
+                onClick={() => setSelectedBody(body)}
+                className={`carent-pill ${selectedBody === body ? "active" : ""}`}
               >
-                {b}
+                {body}
               </button>
             ))}
           </div>
 
-          <div className="fleet-search-sort">
-            <div className="fleet-search-box">
+          <div className="carent-controls-right">
+            <div className="carent-search-wrap">
               <SearchIcon />
               <input
                 type="text"
@@ -551,7 +546,7 @@ export default function FleetPage() {
             </div>
 
             <select
-              className="fleet-sort-select"
+              className="carent-select"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
             >
@@ -561,120 +556,66 @@ export default function FleetPage() {
             </select>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Vehicle Grid */}
-      <div className="fleet-grid">
+      {/* Cars Grid */}
+      <div className="carent-cars-grid">
         {filteredCars.map((car) => (
-          <div key={car.id} className="car-card">
-            <div className="car-image-container">
+          <div key={car.id} className="carent-card">
+            <div className="carent-card-img-wrap">
               <img src={car.image} alt={car.name} />
-              {car.tag && <span className="car-tag">{car.tag}</span>}
+              {car.tag && <span className="carent-card-tag">{car.tag}</span>}
+              <span className="carent-card-badge">{car.year}</span>
             </div>
 
-            <div className="car-content">
-              <div className="car-header">
-                <h3 className="car-name">{car.name}</h3>
-                <span className="car-body-badge">{car.body}</span>
-              </div>
-              <p className="car-desc">{car.description}</p>
+            <div className="carent-card-body">
+              <h2 className="carent-card-title">{car.name}</h2>
+              <p className="carent-card-desc">{car.description}</p>
 
-              <div className="car-specs">
-                <div className="spec-item">
-                  <span className="spec-label">Year</span>
-                  <span className="spec-val">{car.year}</span>
+              <div className="carent-card-specs">
+                <div className="carent-spec-badge">
+                  <FuelPumpIcon />
+                  <span>{car.fuel}</span>
                 </div>
-                <div className="spec-item">
-                  <span className="spec-label">Seats</span>
-                  <span className="spec-val">{car.seats} Seats</span>
+                <div className="carent-spec-badge">
+                  <GearboxIcon />
+                  <span>{car.gear}</span>
                 </div>
-                <div className="spec-item">
-                  <span className="spec-label">Trans</span>
-                  <span className="spec-val">{car.gear}</span>
+                <div className="carent-spec-badge">
+                  <SeatsIcon />
+                  <span>{car.seats} Seats</span>
                 </div>
               </div>
 
-              <div className="car-footer">
-                <div className="price-group">
-                  <span className="price-val">{fmt(car.price)}</span>
-                  <span className="price-period">per day / taxes included</span>
+              <div className="carent-card-footer">
+                <div className="carent-card-price">
+                  <span className="carent-price-val">{fmt(car.price)}</span>
+                  <span className="carent-price-sub">per day / taxes included</span>
                 </div>
-                <button
-                  onClick={() => setActiveCar(car)}
-                  className="card-action-btn"
-                >
-                  Details <ArrowIcon />
-                </button>
+                <Link href={`/fleet/${car.slug}`} className="carent-book-btn">
+                  View Details
+                  <ArrowTopRight />
+                </Link>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Details Modal */}
-      {activeCar && (
-        <div className="modal-overlay" onClick={() => setActiveCar(null)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setActiveCar(null)}>✕</button>
-            <div className="modal-body">
-              <div className="modal-img-wrap">
-                <img src={activeCar.image} alt={activeCar.name} />
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <h2 style={{ fontSize: "24px", margin: 0 }}>{activeCar.name}</h2>
-                <span style={{ fontSize: "12px", background: "rgba(255,255,255,0.1)", padding: "4px 10px", borderRadius: "999px" }}>
-                  {activeCar.year} · {activeCar.body}
-                </span>
-              </div>
-
-              <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px", lineHeight: "1.6", margin: "16px 0" }}>
-                {activeCar.description}
-              </p>
-
-              <div className="modal-specs-grid">
-                <div className="spec-item">
-                  <span className="spec-label">0-100 km/h</span>
-                  <span className="spec-val">{activeCar.acceleration || "3.5s"}</span>
-                </div>
-                <div className="spec-item">
-                  <span className="spec-label">Top Speed</span>
-                  <span className="spec-val">{activeCar.topSpeed || "300 km/h"}</span>
-                </div>
-                <div className="spec-item">
-                  <span className="spec-label">Horsepower</span>
-                  <span className="spec-val">{activeCar.power || "500+ HP"}</span>
-                </div>
-                <div className="spec-item">
-                  <span className="spec-label">Transmission</span>
-                  <span className="spec-val">{activeCar.gear}</span>
-                </div>
-                <div className="spec-item">
-                  <span className="spec-label">Fuel</span>
-                  <span className="spec-val">{activeCar.fuel}</span>
-                </div>
-                <div className="spec-item">
-                  <span className="spec-label">Luggage</span>
-                  <span className="spec-val">{activeCar.bags} Bags</span>
-                </div>
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "24px" }}>
-                <div>
-                  <div style={{ fontSize: "24px", fontWeight: "700" }}>{fmt(activeCar.price)}</div>
-                  <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>Daily rental rate</div>
-                </div>
-                <Link
-                  href={`/#booking`}
-                  className="card-action-btn"
-                  style={{ padding: "12px 24px", fontSize: "14px" }}
-                >
-                  Reserve This Car
-                </Link>
-              </div>
-            </div>
+      {/* Footer */}
+      <footer className="carent-footer">
+        <div className="carent-footer-inner">
+          <div className="carent-footer-copy">
+            © {new Date().getFullYear()} 30Rentals. All rights reserved.
+          </div>
+          <div className="carent-footer-links">
+            <Link href="/">Home</Link>
+            <Link href="/fleet">Cars</Link>
+            <Link href="/#experience">Experience</Link>
+            <Link href="/#faq">FAQ</Link>
           </div>
         </div>
-      )}
+      </footer>
     </div>
   );
 }

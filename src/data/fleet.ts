@@ -2,6 +2,7 @@ export type Body = "SUV" | "Sport" | "Coupe" | "Wagon";
 
 export type Car = {
   id: string;
+  slug: string;
   name: string;
   year: number;
   body: Body;
@@ -15,16 +16,22 @@ export type Car = {
   topSpeed?: string;
   acceleration?: string;
   power?: string;
-  description?: string;
+  description: string;
+  overview?: string;
+  features?: string[];
+  gallery?: string[];
+  doors?: number;
 };
 
 export const FLEET: Car[] = [
   {
     id: "c1",
+    slug: "range-rover-sport",
     name: "Range Rover Sport",
     year: 2024,
     body: "SUV",
     seats: 5,
+    doors: 4,
     gear: "Auto",
     fuel: "Petrol",
     bags: 4,
@@ -35,13 +42,17 @@ export const FLEET: Car[] = [
     acceleration: "5.7s",
     power: "400 HP",
     description: "Refined luxury meets assertive all-terrain performance with a commanding road presence.",
+    overview: "The Range Rover Sport combines dynamic sports-inspired handling with the peerless capability and bespoke refinement that defines the marque.",
+    features: ["Air Suspension", "Panoramic Sunroof", "Meridian 3D Audio", "Adaptive Cruise Control", "360° Surround Camera", "Apple CarPlay & Android Auto", "Heated & Ventilated Seats", "Four-zone Climate Control"],
   },
   {
     id: "c2",
+    slug: "porsche-911-gt3-rs",
     name: "Porsche 911 GT3 RS",
     year: 2023,
     body: "Sport",
     seats: 2,
+    doors: 2,
     gear: "Auto",
     fuel: "Petrol",
     bags: 1,
@@ -52,13 +63,17 @@ export const FLEET: Car[] = [
     acceleration: "3.2s",
     power: "518 HP",
     description: "Naturally aspirated precision track weapon homologated directly for the street.",
+    overview: "Built for pure unadulterated downforce and track agility. The GT3 RS features an active rear wing, carbon ceramic brakes, and a howling 9,000 RPM flat-six engine.",
+    features: ["DRS Rear Wing", "Carbon Ceramic Brakes", "Telemetry & Lap Trigger", "Club Sport Package", "Michelin Pilot Sport Cup 2 R", "Lightweight Carbon Bucket Seats"],
   },
   {
     id: "c3",
+    slug: "lamborghini-urus",
     name: "Lamborghini Urus",
     year: 2024,
     body: "SUV",
     seats: 5,
+    doors: 4,
     gear: "Auto",
     fuel: "Petrol",
     bags: 4,
@@ -69,13 +84,17 @@ export const FLEET: Car[] = [
     acceleration: "3.5s",
     power: "657 HP",
     description: "Super sports car soul combined with the muscular capability and daily utility of an SUV.",
+    overview: "Lamborghini Urus is the world's first Super Sport Utility Vehicle, in which luxury, sportiness and performance meet comfort and versatility.",
+    features: ["Anima Drive Modes (Neve, Terra, Sabbia)", "Akrapovic Titanium Exhaust", "Bang & Olufsen 3D Sound", "Carbon Fiber Exterior Pack", "Massaging Front Seats", "Heads-Up Display"],
   },
   {
     id: "c4",
+    slug: "mclaren-720s-spider",
     name: "McLaren 720S Spider",
     year: 2023,
     body: "Sport",
     seats: 2,
+    doors: 2,
     gear: "Auto",
     fuel: "Petrol",
     bags: 1,
@@ -85,13 +104,17 @@ export const FLEET: Car[] = [
     acceleration: "2.9s",
     power: "710 HP",
     description: "Hypercar aerodynamics and drop-top exhilaration powered by a twin-turbocharged V8.",
+    overview: "The McLaren 720S Spider delivers exhilarating roof-down freedom backed by a rigid Monocage II-S carbon fiber chassis and active aerodynamics.",
+    features: ["Retractable Hard Top", "Monocage II-S Carbon Tub", "Variable Drift Control", "Bowers & Wilkins 12-Speaker Audio", "Electrochromic Glass Roof"],
   },
   {
     id: "c5",
+    slug: "bmw-m4-competition",
     name: "BMW M4 Competition",
     year: 2024,
     body: "Coupe",
     seats: 4,
+    doors: 2,
     gear: "Auto",
     fuel: "Petrol",
     bags: 2,
@@ -101,13 +124,17 @@ export const FLEET: Car[] = [
     acceleration: "3.8s",
     power: "503 HP",
     description: "Iconic motorsport pedigree tuned for aggressive cornering agility and pure cockpit thrill.",
+    overview: "Engineered by BMW M GmbH, the M4 Competition combines a high-revving twin-turbo inline 6-cylinder engine with track-derived cooling and chassis setups.",
+    features: ["M xDrive with 2WD Mode", "M Carbon Bucket Seats", "Harman Kardon Surround Sound", "Laserlight Headlights", "M Compound Brakes"],
   },
   {
     id: "c6",
+    slug: "aston-martin-db12",
     name: "Aston Martin DB12",
     year: 2024,
     body: "Coupe",
     seats: 4,
+    doors: 2,
     gear: "Auto",
     fuel: "Petrol",
     bags: 2,
@@ -118,13 +145,17 @@ export const FLEET: Car[] = [
     acceleration: "3.6s",
     power: "671 HP",
     description: "The world's first Super Tourer. Impeccable craftsmanship and raw, unrelenting power.",
+    overview: "Aston Martin DB12 delivers a quantum leap in sporting character and dynamic capability, asserting its position at the apex of British grand touring.",
+    features: ["Bowers & Wilkins Halo Audio", "Electronic Rear Differential (E-Diff)", "Handcrafted Bridge of Weir Leather", "Infotainment with Apple CarPlay", "Carbon Ceramic Matrix Brakes"],
   },
   {
     id: "c7",
+    slug: "mercedes-amg-g63",
     name: "Mercedes-AMG G63",
     year: 2024,
     body: "SUV",
     seats: 5,
+    doors: 4,
     gear: "Auto",
     fuel: "Petrol",
     bags: 4,
@@ -134,13 +165,17 @@ export const FLEET: Car[] = [
     acceleration: "4.5s",
     power: "577 HP",
     description: "Unrivaled off-road dominance paired with handcrafted luxury and an unmistakable V8 rumble.",
+    overview: "The timeless silhouette of the G-Class, supercharged with AMG motorsport dynamics and side-exit performance exhausts.",
+    features: ["AMG Performance Exhaust", "Triple Differential Locks", "Burmester Surround Sound", "Nappa Leather Designo Interior", "22-inch Forged Wheels"],
   },
   {
     id: "c8",
+    slug: "audi-rs6-avant",
     name: "Audi RS6 Avant",
     year: 2023,
     body: "Wagon",
     seats: 5,
+    doors: 4,
     gear: "Auto",
     fuel: "Petrol",
     bags: 5,
@@ -150,13 +185,17 @@ export const FLEET: Car[] = [
     acceleration: "3.6s",
     power: "591 HP",
     description: "The ultimate hyper-wagon: effortless touring space engineered with fierce twin-turbo speed.",
+    overview: "Wide, menacing, and capable of keeping pace with mid-engine supercars while seating five adults with full weekend luggage.",
+    features: ["Quattro Sport Differential", "Dynamic All-Wheel Steering", "Bang & Olufsen Advanced Sound", "RS Sport Exhaust", "Valcona Leather Honeycomb Seats"],
   },
   {
     id: "c9",
+    slug: "range-rover-velar",
     name: "Range Rover Velar",
     year: 2024,
     body: "SUV",
     seats: 5,
+    doors: 4,
     gear: "Auto",
     fuel: "Diesel",
     bags: 4,
@@ -167,6 +206,8 @@ export const FLEET: Car[] = [
     acceleration: "7.1s",
     power: "204 HP",
     description: "Minimalist, reductive exterior architecture with calm modern interior composure.",
+    overview: "The avant-garde Range Rover: clean lines, serene acoustics, and sustainable luxury materials for a calm and elevated drive.",
+    features: ["Pivi Pro Dual Touchscreens", "Flush Deployable Door Handles", "Meridian Sound System", "Cabin Air Purification", "Matrix LED Headlamps"],
   },
 ];
 
